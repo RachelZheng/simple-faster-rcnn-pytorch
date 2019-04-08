@@ -7,7 +7,7 @@ from pprint import pprint
 
 class Config:
     # data
-    voc_data_dir = '/home/cy/.chainer/dataset/pfnet/chainercv/voc/VOCdevkit/VOC2007/'
+    voc_data_dir = '/pylon5/ir5fp5p/xzheng4/data/voc/VOCdevkit/VOC2007/'
     min_size = 600  # image resize
     max_size = 1000 # image resize
     num_workers = 8
@@ -41,7 +41,7 @@ class Config:
     use_chainer = False # try match everything as chainer
     use_drop = False # use dropout in RoIHead
     # debug
-    debug_file = '/tmp/debugf'
+    debug_file = '/pylon5/ir5fp5p/xzheng4/temp/'
 
     test_num = 10000
     # model
