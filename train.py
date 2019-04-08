@@ -19,6 +19,9 @@ from utils import array_tool as at
 from utils.vis_tool import visdom_bbox
 from utils.eval_tool import eval_detection_voc
 
+## tensorboard recording
+from logger import Logger
+
 # fix for ulimit
 # https://github.com/pytorch/pytorch/issues/973#issuecomment-346405667
 import resource
@@ -55,6 +58,8 @@ def train(**kwargs):
 
     dataset = Dataset(opt)
     print('load data')
+    logger = Logger('./logs')
+
     dataloader = data_.DataLoader(dataset, \
                                   batch_size=1, \
                                   shuffle=True, \
@@ -77,6 +82,8 @@ def train(**kwargs):
     best_map = 0
     lr_ = opt.lr
     for epoch in range(opt.epoch):
+        key_loss = 'loss' + str(epoch)
+        key_img = 'img' + str(epoch)
         trainer.reset_meters()
         for ii, (img, bbox_, label_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
@@ -110,13 +117,31 @@ def train(**kwargs):
                 # roi confusion matrix
                 trainer.vis.img('roi_cm', at.totensor(trainer.roi_cm.conf, False).float())
             """
+            if (ii + 1) % opt.plot_every == 0:
+                info = {key_loss: trainer.get_meter_data()}
+                for tag, value in info.items():
+                    logger.scalar_summary(tag, value, ii+1)
+ 
+                ori_img_ = inverse_normalize(at.tonumpy(img[0]))
+                info = { key_img: ori_img_}
+                for tag, images in info.items():
+                    logger.image_summary(tag, images, ii+1)
+
         eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
-        # trainer.vis.plot('test_map', eval_result['map'])
         lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
+        """
+        trainer.vis.plot('test_map', eval_result['map'])
         log_info = 'lr:{}, map:{},loss:{}'.format(str(lr_),
                                                   str(eval_result['map']),
                                                   str(trainer.get_meter_data()))
-        # trainer.vis.log(log_info)
+        trainer.vis.log(log_info)
+        """
+        ## add tensorboard logger
+        print ('epoch [{}], Loss: {:.4f}, map: {:.2f}, lr: {}'.format(epoch, trainer.get_meter_data(), eval_result['map'], str(lr_)))
+        # Log scalar values (scalar summary)
+        info = { 'loss': trainer.get_meter_data(), 'accuracy': eval_result['map']}
+        for tag, value in info.items():
+            logger.scalar_summary(tag, value, epoch+1)
 
         if eval_result['map'] > best_map:
             best_map = eval_result['map']
