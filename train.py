@@ -1,5 +1,8 @@
 from __future__ import  absolute_import
 # though cupy is not used but without this line, it raise errors...
+import sys
+sys.path.insert(0, "/pylon5/ir5fp5p/xzheng4/conda_install/envs/py3/lib/python3.6/site-packages/")
+
 import cupy as cp
 import os
 
