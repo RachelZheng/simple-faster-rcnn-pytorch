@@ -118,9 +118,9 @@ def train(**kwargs):
                 trainer.vis.img('roi_cm', at.totensor(trainer.roi_cm.conf, False).float())
             """
             if (ii + 1) % opt.plot_every == 0:
-                info = {key_loss: trainer.get_meter_data()}
+                info = trainer.get_meter_data()
                 for tag, value in info.items():
-                    logger.scalar_summary(tag, value, ii+1)
+                    logger.scalar_summary(tag + str(epoch), value, ii+1)
  
                 ori_img_ = inverse_normalize(at.tonumpy(img[0]))
                 info = { key_img: ori_img_}
@@ -137,10 +137,13 @@ def train(**kwargs):
         trainer.vis.log(log_info)
         """
         ## add tensorboard logger
-        print ('epoch [{}], Loss: {:.4f}, map: {:.2f}, lr: {}'.format(epoch, trainer.get_meter_data(), eval_result['map'], str(lr_)))
+        print ('epoch {}, lr:{}, map:{},loss:{}'.format(str(epoch),
+                                                  str(lr_),
+                                                  str(eval_result['map']),
+                                                  str(trainer.get_meter_data())))
         # Log scalar values (scalar summary)
-        info = { 'loss': trainer.get_meter_data(), 'accuracy': eval_result['map']}
-        for tag, value in info.items():
+        logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
+        for tag, value in trainer.get_meter_data().items():
             logger.scalar_summary(tag, value, epoch+1)
 
         if eval_result['map'] > best_map:
