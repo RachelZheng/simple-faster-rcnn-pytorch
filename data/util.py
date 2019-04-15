@@ -74,6 +74,15 @@ def resize_bbox(bbox, in_size, out_size):
     return bbox
 
 
+def resize_pts(pts, in_size, out_size):
+    """ resize the list of points
+    """
+    pts = pts.copy()
+    pts[:, 0] = float(out_size[0]) / in_size[0] * pts[:, 0]
+    pts[:, 1] = float(out_size[1]) / in_size[1] * pts[:, 1]
+    return pts
+
+
 def flip_bbox(bbox, size, y_flip=False, x_flip=False):
     """Flip bounding boxes accordingly.
 
@@ -112,6 +121,18 @@ def flip_bbox(bbox, size, y_flip=False, x_flip=False):
         bbox[:, 1] = x_min
         bbox[:, 3] = x_max
     return bbox
+
+
+
+def flip_pts(points, size, y_flip=False, x_flip=False):
+    H, W = size
+    points = points.copy()
+    if y_flip:
+        points[:, 0] = H - points[:, 0] - 1
+    if x_flip:
+        points[:, 1] = H - points[:, 1] - 1
+    return points
+
 
 
 def crop_bbox(

@@ -1,7 +1,6 @@
 from __future__ import  absolute_import
 from __future__ import  division
 import torch as t
-# from data.voc_dataset import VOCBboxDataset
 from skimage import transform as sktsf
 from torchvision import transforms as tvtsf
 from data import util
@@ -85,20 +84,17 @@ class Transform(object):
 
     def __call__(self, in_data):
         img, points, labels = in_data
-        # img, bbox, label = in_data
         _, H, W = img.shape
         img = preprocess(img, self.min_size, self.max_size)
         _, o_H, o_W = img.shape
         scale = o_H / H
-        bbox = util.resize_bbox(bbox, (H, W), (o_H, o_W))
+        points = util.resize_pts(points, (H, W), (o_H, o_W))
 
         # horizontally flip
-        img, params = util.random_flip(
-            img, x_random=True, return_param=True)
-        bbox = util.flip_bbox(
-            bbox, (o_H, o_W), x_flip=params['x_flip'])
+        img, params = util.random_flip(img, x_random=True, return_param=True)
+        points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
 
-        return img, bbox, label, scale
+        return img, points, label, scale
 
 
 class Dataset:
@@ -111,7 +107,6 @@ class Dataset:
         ori_img, points, labels = self.db.get_example(idx)
         img, points, labels, scale = self.tsf((ori_img, points, labels))
 
-        # img, bbox, label, scale = self.tsf((ori_img, points, labels))
         # TODO: check whose stride is negative to fix this instead copy all
         # some of the strides of a given numpy array are negative.
         return img.copy(), points.copy(), labels.copy(), scale
@@ -124,7 +119,6 @@ class Dataset:
 class TestDataset:
     def __init__(self, opt, split='test'):
         self.opt = opt
-        # self.db = VOCBboxDataset(opt.voc_data_dir, split=split, use_difficult=use_difficult)
         self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
 
     def __getitem__(self, idx):
