@@ -7,7 +7,9 @@ from pprint import pprint
 
 class Config:
     # data
-    voc_data_dir = '/pylon5/ir5fp5p/xzheng4/data/voc/VOCdevkit/VOC2007/'
+    data_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_grayscale/'
+    annotation_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_dataset/Annotations'
+    split_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_dataset/Data_split/'
     min_size = 600  # image resize
     max_size = 1000 # image resize
     num_workers = 8
@@ -23,14 +25,7 @@ class Config:
     lr_decay = 0.1  # 1e-3 -> 1e-4
     lr = 1e-3
 
-
-    # visualization
-    env = 'faster-rcnn'  # visdom env
-    port = 8097
-    plot_every = 40  # vis every N iter
-
     # preset
-    data = 'voc'
     pretrained_model = 'vgg16'
 
     # training

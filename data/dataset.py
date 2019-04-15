@@ -1,12 +1,15 @@
 from __future__ import  absolute_import
 from __future__ import  division
 import torch as t
-from data.voc_dataset import VOCBboxDataset
+# from data.voc_dataset import VOCBboxDataset
 from skimage import transform as sktsf
 from torchvision import transforms as tvtsf
 from data import util
 import numpy as np
 from utils.config import opt
+
+# add personal dataset
+from data.storm_dataset import StormDataset
 
 
 def inverse_normalize(img):
@@ -81,7 +84,8 @@ class Transform(object):
         self.max_size = max_size
 
     def __call__(self, in_data):
-        img, bbox, label = in_data
+        img, points, labels = in_data
+        # img, bbox, label = in_data
         _, H, W = img.shape
         img = preprocess(img, self.min_size, self.max_size)
         _, o_H, o_W = img.shape
@@ -100,30 +104,34 @@ class Transform(object):
 class Dataset:
     def __init__(self, opt):
         self.opt = opt
-        self.db = VOCBboxDataset(opt.voc_data_dir)
+        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir)
         self.tsf = Transform(opt.min_size, opt.max_size)
 
     def __getitem__(self, idx):
-        ori_img, bbox, label, difficult = self.db.get_example(idx)
+        ori_img, points, labels = self.db.get_example(idx)
+        img, points, labels, scale = self.tsf((ori_img, points, labels))
 
-        img, bbox, label, scale = self.tsf((ori_img, bbox, label))
+        # img, bbox, label, scale = self.tsf((ori_img, points, labels))
         # TODO: check whose stride is negative to fix this instead copy all
         # some of the strides of a given numpy array are negative.
-        return img.copy(), bbox.copy(), label.copy(), scale
+        return img.copy(), points.copy(), labels.copy(), scale
 
     def __len__(self):
         return len(self.db)
 
 
+
 class TestDataset:
-    def __init__(self, opt, split='test', use_difficult=True):
+    def __init__(self, opt, split='test'):
         self.opt = opt
-        self.db = VOCBboxDataset(opt.voc_data_dir, split=split, use_difficult=use_difficult)
+        # self.db = VOCBboxDataset(opt.voc_data_dir, split=split, use_difficult=use_difficult)
+        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
 
     def __getitem__(self, idx):
-        ori_img, bbox, label, difficult = self.db.get_example(idx)
+        ori_img, points, labels = self.db.get_example(idx)
+
         img = preprocess(ori_img)
-        return img, ori_img.shape[1:], bbox, label, difficult
+        return img, ori_img.shape[1:], points, labels
 
     def __len__(self):
         return len(self.db)

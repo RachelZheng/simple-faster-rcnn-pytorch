@@ -235,7 +235,6 @@ def generate_anchor_base(base_size=16, ratios=[0.5, 1, 2],
         for j in six.moves.range(len(anchor_scales)):
             h = base_size * anchor_scales[j] * np.sqrt(ratios[i])
             w = base_size * anchor_scales[j] * np.sqrt(1. / ratios[i])
-
             index = i * len(anchor_scales) + j
             anchor_base[index, 0] = py - h / 2.
             anchor_base[index, 1] = px - w / 2.
