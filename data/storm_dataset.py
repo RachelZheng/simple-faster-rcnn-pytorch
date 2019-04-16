@@ -10,7 +10,7 @@ from .util import read_image
 class StormDataset:
 	def  __init__(self, data_dir, annotation_dir, split_dir,
 		sub_dataset='torn', split='trainval'):
-		if name_dataset == 'all':
+		if sub_dataset == 'all':
 			id_list_file = os.path.join(
 				split_dir, 'Data_split/{}.txt'.format(name_split))
 		else:
