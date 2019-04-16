@@ -47,7 +47,7 @@ class StormDataset:
 			labels.append(STORM_LABEL_NAMES.index(label_type))
 
 		points = np.stack(points).astype(np.float32)
-		labels = np.stack(label).astype(np.int32)
+		labels = np.stack(labels).astype(np.int32)
 
 		return img, points, labels
 
