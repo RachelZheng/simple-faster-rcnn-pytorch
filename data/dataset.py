@@ -100,7 +100,7 @@ class Transform(object):
         img, params = util.random_flip(img, x_random=True, return_param=True)
         points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
 
-        return img, points, label, scale
+        return img, points, labels, scale
 
 
 class Dataset:
