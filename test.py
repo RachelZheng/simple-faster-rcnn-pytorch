@@ -11,6 +11,10 @@ from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
 
+from data.dataset import Dataset, TestDataset, inverse_normalize
+
+from logger import Logger
+
 proposal_target_creator = ProposalTargetCreator()
 extractor, classifier = decom_vgg16()
 
