@@ -1,5 +1,5 @@
 from pprint import pprint
-
+import os
 
 # Default Configs for training
 # NOTE that, config items could be overwriten by passing argument through command line.
@@ -7,9 +7,12 @@ from pprint import pprint
 
 class Config:
     # data
-    data_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_grayscale/'
-    annotation_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_dataset/Annotations'
-    split_dir = '/pylon5/ir5fp5p/xzheng4/data_meteo/ref_dataset/Data_split/'
+    prefixes = ('/pylon5/ir5fp5p/xzheng4/data_meteo/', 
+        '/oasis/projects/nsf/pen150/xinye/data_meteo/')
+    prefix = prefixes[1]
+    data_dir = os.path.join(prefix, 'ref_grayscale/')
+    annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
+    split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
     min_size = 600  # image resize
     max_size = 1000 # image resize
     num_workers = 8
@@ -36,14 +39,14 @@ class Config:
     use_chainer = False # try match everything as chainer
     use_drop = False # use dropout in RoIHead
     # debug
-    debug_file = '/pylon5/ir5fp5p/xzheng4/temp/'
+    # debug_file = '/pylon5/ir5fp5p/xzheng4/temp/'
 
     test_num = 10000
     # model
     load_path = None
 
     caffe_pretrain = False # use caffe pretrained model instead of torchvision
-    caffe_pretrain_path = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/vgg16_caffe.pth'
+    # caffe_pretrain_path = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/vgg16_caffe.pth'
 
     def _parse(self, kwargs):
         state_dict = self._state_dict()

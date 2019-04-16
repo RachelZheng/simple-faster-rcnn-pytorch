@@ -27,6 +27,7 @@ dataloader_iterator = iter(dataloader)
 test = next(dataloader_iterator)
 img = test[0]
 bbox = test[1]
+label = test[2].numpy()[0]
 scale = test[-1].numpy()[0]
 
 features = extractor(img)
@@ -37,7 +38,8 @@ rpn = RegionProposalNetwork(512, 512, ratios=[0.5, 1, 2],anchor_scales=[8, 16, 3
 rpn_locs, rpn_scores, rois, roi_indices, anchor = rpn(features, img_size, scale)
 
 
-
+pickle.dump([rpn_locs, rpn_scores, rois, roi_indices, anchor, features], 
+	open('/pylon5/ir5fp5p/xzheng4/temp/record.p', 'wb'))
 sample_roi, gt_roi_loc, gt_roi_label = proposal_target_creator(
             roi, at.tonumpy(bbox),
             at.tonumpy(label),
