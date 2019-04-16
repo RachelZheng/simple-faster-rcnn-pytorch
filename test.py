@@ -10,6 +10,7 @@ from model.faster_rcnn_vgg16 import decom_vgg16
 from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
+from torch.utils import data as data_
 
 from data.dataset import Dataset, TestDataset, inverse_normalize
 
