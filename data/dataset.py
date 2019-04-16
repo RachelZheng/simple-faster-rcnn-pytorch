@@ -10,8 +10,13 @@ from utils.config import opt
 # add personal dataset
 from data.storm_dataset import StormDataset
 
-MEAN_IMG = [122.7717, 115.9465, 102.9801]
-STD_IMG = [58.395, 57.12 , 57.375]
+# MEAN_IMG = [122.7717, 115.9465, 102.9801]
+# STD_IMG = [58.395, 57.12 , 57.375]
+
+# ------ change for storm dataset ------
+MEAN_IMG = [3.2187, 3.2187, 3.2187]
+STD_IMG = [13.6640, 13.6640, 13.6640]
+
 
 def inverse_normalize(img):
     if opt.caffe_pretrain:

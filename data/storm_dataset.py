@@ -10,10 +10,6 @@ from .util import read_image
 class StormDataset:
 	def  __init__(self, data_dir, annotation_dir, split_dir,
 		sub_dataset='torn', split='trainval'):
-        ## warning message:
-        if sub_dataset not in ['train', 'trainval', 'val', 'test']:
-            warnings.warn('please pick split from \'train\', \'trainval\', \'val\', or \'test\'')
-
         if name_dataset == 'all':
             id_list_file = os.path.join(
                 split_dir, 'Data_split/{}.txt'.format(name_split))
