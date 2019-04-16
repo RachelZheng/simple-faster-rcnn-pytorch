@@ -10,12 +10,12 @@ from .util import read_image
 class StormDataset:
 	def  __init__(self, data_dir, annotation_dir, split_dir,
 		sub_dataset='torn', split='trainval'):
-        if name_dataset == 'all':
-            id_list_file = os.path.join(
-                split_dir, 'Data_split/{}.txt'.format(name_split))
-        else:
-            id_list_file = os.path.join(
-                split_dir, 'Data_split/{}_{}.txt'.format(sub_dataset, split))
+		if name_dataset == 'all':
+			id_list_file = os.path.join(
+				split_dir, 'Data_split/{}.txt'.format(name_split))
+		else:
+			id_list_file = os.path.join(
+				split_dir, 'Data_split/{}_{}.txt'.format(sub_dataset, split))
 
 		self.ids = [int(id_.split('.')[0]) for id_ in open(id_list_file)]
 		self.data_dir = data_dir
@@ -24,8 +24,8 @@ class StormDataset:
 		self.sub_dataset = sub_dataset
 		self.label_names = STORM_LABEL_NAMES
 
-    def __len__(self):
-        return len(self.ids)
+	def __len__(self):
+		return len(self.ids)
 
 
 	def get_example(self, i):
