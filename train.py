@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
 import sys
-sys.path.insert(0, "/pylon5/ir5fp5p/xzheng4/conda_install/envs/py3/lib/python3.6/site-packages/")
+# sys.path.insert(0, "/pylon5/ir5fp5p/xzheng4/conda_install/envs/py3/lib/python3.6/site-packages/")
 
 import cupy as cp
 import os
@@ -16,7 +16,7 @@ from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
 from utils import array_tool as at
-from utils.vis_tool import visdom_bbox
+# from utils.vis_tool import visdom_bbox
 from utils.eval_tool import eval_detection_voc
 
 ## tensorboard recording
@@ -72,7 +72,7 @@ def train(**kwargs):
                                        shuffle=False, \
                                        pin_memory=True
                                        )
-    faster_rcnn = FasterRCNNVGG16()
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
     print('model construct completed')
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     if opt.load_path:
@@ -85,10 +85,10 @@ def train(**kwargs):
         key_loss = 'loss' + str(epoch)
         key_img = 'img' + str(epoch)
         trainer.reset_meters()
-        for ii, (img, bbox_, label_, scale) in tqdm(enumerate(dataloader)):
+        for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
-            img, bbox, label = img.cuda().float(), bbox_.cuda(), label_.cuda()
-            trainer.train_step(img, bbox, label, scale)
+            img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
+            trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
                 if os.path.exists(opt.debug_file):

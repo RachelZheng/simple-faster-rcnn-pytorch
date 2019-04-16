@@ -62,7 +62,7 @@ class FasterRCNNTrainer(nn.Module):
         self.roi_cm = ConfusionMeter(21)
         self.meters = {k: AverageValueMeter() for k in LossTuple._fields}  # average loss
 
-    def forward(self, imgs, bboxes, labels, scale):
+    def forward(self, imgs, points, labels, scale):
         """Forward Faster R-CNN and calculate losses.
 
         Here are notations used.
@@ -87,7 +87,8 @@ class FasterRCNNTrainer(nn.Module):
         Returns:
             namedtuple of 5 losses
         """
-        n = bboxes.shape[0]
+        # ----  WHY? ---- 
+        n = points.shape[0]
         if n != 1:
             raise ValueError('Currently only batch size 1 is supported.')
 
@@ -100,7 +101,8 @@ class FasterRCNNTrainer(nn.Module):
             self.faster_rcnn.rpn(features, img_size, scale)
 
         # Since batch size is one, convert variables to singular form
-        bbox = bboxes[0]
+        # bbox = bboxes[0]
+        point = points[0]
         label = labels[0]
         rpn_score = rpn_scores[0]
         rpn_loc = rpn_locs[0]
@@ -164,13 +166,15 @@ class FasterRCNNTrainer(nn.Module):
 
         return LossTuple(*losses)
 
-    def train_step(self, imgs, bboxes, labels, scale):
+
+    def train_step(self, imgs, points, labels, scale):
         self.optimizer.zero_grad()
-        losses = self.forward(imgs, bboxes, labels, scale)
+        losses = self.forward(imgs, points, labels, scale)
         losses.total_loss.backward()
         self.optimizer.step()
         self.update_meters(losses)
         return losses
+
 
     def save(self, save_optimizer=False, save_path=None, **kwargs):
         """serialize models include optimizer and other info
@@ -189,7 +193,6 @@ class FasterRCNNTrainer(nn.Module):
         save_dict['model'] = self.faster_rcnn.state_dict()
         save_dict['config'] = opt._state_dict()
         save_dict['other_info'] = kwargs
-        # save_dict['vis_info'] = self.vis.state_dict()
 
         if save_optimizer:
             save_dict['optimizer'] = self.optimizer.state_dict()

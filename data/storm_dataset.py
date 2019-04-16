@@ -42,7 +42,6 @@ class StormDataset:
 		points = list()
 		labels = list()
 		
-
 		## add all the points into the dataset 
 		for obj in anno.findall('points'):
 			label_type = obj.find('event_type').text
