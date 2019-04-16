@@ -39,11 +39,11 @@ class StormDataset:
 		labels = list()
 		
 		## add all the points into the dataset 
-		for obj in anno.findall('points'):
+		for obj in anno.findall('point'):
 			label_type = obj.find('event_type').text
 			if (self.sub_dataset != 'all') and (self.sub_dataset != label_type):
 				continue
-			points.append([obj.find(tag).text for tag in ('y', 'x')])
+			points.append([int(obj.find(tag).text) for tag in ('y', 'x')])
 			labels.append(STORM_LABEL_NAMES.index(label_type))
 
 		points = np.stack(points).astype(np.float32)
