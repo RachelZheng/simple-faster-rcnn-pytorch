@@ -11,7 +11,6 @@ from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
 
-
 proposal_target_creator = ProposalTargetCreator()
 extractor, classifier = decom_vgg16()
 
@@ -39,3 +38,5 @@ sample_roi, gt_roi_loc, gt_roi_label = proposal_target_creator(
             at.tonumpy(label),
             loc_normalize_mean,
             loc_normalize_std)
+
+
