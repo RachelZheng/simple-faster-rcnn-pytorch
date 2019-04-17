@@ -3,7 +3,8 @@ import os
 from collections import namedtuple
 import time
 from torch.nn import functional as F
-from model.utils.creator_tool import AnchorTargetCreator, ProposalTargetCreator
+from model.utils.creator_tool import AnchorTargetCreator # , ProposalTargetCreator
+from model.utils.creator_tool_pts import ProposalPointTargetCreator
 
 from torch import nn
 import torch as t
@@ -48,7 +49,8 @@ class FasterRCNNTrainer(nn.Module):
 
         # target creator create gt_bbox gt_label etc as training targets. 
         self.anchor_target_creator = AnchorTargetCreator()
-        self.proposal_target_creator = ProposalTargetCreator()
+        # self.proposal_target_creator = ProposalTargetCreator()
+        self.proposal_target_creator = ProposalPointTargetCreator()
 
         self.loc_normalize_mean = faster_rcnn.loc_normalize_mean
         self.loc_normalize_std = faster_rcnn.loc_normalize_std
@@ -87,7 +89,6 @@ class FasterRCNNTrainer(nn.Module):
         Returns:
             namedtuple of 5 losses
         """
-        # ----  WHY? ---- 
         n = points.shape[0]
         if n != 1:
             raise ValueError('Currently only batch size 1 is supported.')
@@ -102,6 +103,7 @@ class FasterRCNNTrainer(nn.Module):
 
         # Since batch size is one, convert variables to singular form
         # bbox = bboxes[0]
+        img = imgs[0]
         point = points[0]
         label = labels[0]
         rpn_score = rpn_scores[0]
@@ -111,12 +113,21 @@ class FasterRCNNTrainer(nn.Module):
         # Sample RoIs and forward
         # it's fine to break the computation graph of rois, 
         # consider them as constant input
+        """
         sample_roi, gt_roi_loc, gt_roi_label = self.proposal_target_creator(
             roi,
             at.tonumpy(bbox),
             at.tonumpy(label),
             self.loc_normalize_mean,
             self.loc_normalize_std)
+        """
+        # ----- custom choice of roi --------
+        sample_roi, gt_roi_label = self.proposal_target_creator(
+            at.tonumpy(img),
+            roi,
+            at.tonumpy(point), 
+            at.tonumpy(label))
+        
         # NOTE it's all zero because now it only support for batch=1 now
         sample_roi_index = t.zeros(len(sample_roi))
         roi_cls_loc, roi_score = self.faster_rcnn.head(
@@ -210,6 +221,7 @@ class FasterRCNNTrainer(nn.Module):
         t.save(save_dict, save_path)
         # self.vis.save([self.vis.env])
         return save_path
+
 
     def load(self, path, load_optimizer=True, parse_opt=False, ):
         state_dict = t.load(path)

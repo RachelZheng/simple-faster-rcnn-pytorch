@@ -1,5 +1,5 @@
-from __future__ import  absolute_import
-from __future__ import  division
+from __future__ import absolute_import
+from __future__ import division
 import torch as t
 from skimage import transform as sktsf
 from torchvision import transforms as tvtsf
