@@ -14,6 +14,8 @@ from utils import array_tool as at
 from utils.config import opt
 from torchnet.meter import ConfusionMeter, AverageValueMeter
 
+import ipdb
+
 LossTuple = namedtuple('LossTuple',
                        ['rpn_loc_loss',
                         'rpn_cls_loss',
@@ -109,6 +111,7 @@ class FasterRCNNTrainer(nn.Module):
         rpn_score = rpn_scores[0]
         rpn_loc = rpn_locs[0]
         roi = rois
+        ipdb.set_trace()
 
         # Sample RoIs and forward
         # it's fine to break the computation graph of rois, 

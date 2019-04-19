@@ -4,14 +4,15 @@ import numpy as np
 def bbox_score_intense_event(img, roi, points):
 	""" get the intensity per pixel
 	args:
-		img: n1 x n2. np.array
+		img: c x n1 x n2. np.array
 		roi: n x 4. np.array; in the sequence of ymin, xmin, ymax, xmax
 		points: n' x 2. np.array; in the sequence of y, x
 	return:
 		score_perpix
 	"""
 
-	img_ = img[0,:,:] 
+	img_ = np.copy(img[0,:,:])
+	roi_ = np.round(roi).astype(int)
 	n_roi = roi.shape[0]
 	scores = np.zeros((n_roi,))
 	img_points = np.zeros_like(img_)
