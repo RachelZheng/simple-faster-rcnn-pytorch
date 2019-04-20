@@ -27,9 +27,7 @@ def decom_vgg16():
         del classifier[2]
     classifier = nn.Sequential(*classifier)
     # freeze top4 conv
-    # for layer in features[:10]:
-    # ---- freeze all these conv ---- 
-    for layer in features[:30]:    
+    for layer in features[:10]:
         for p in layer.parameters():
             p.requires_grad = False
     return nn.Sequential(*features), classifier

@@ -56,7 +56,11 @@ def bbox_score_intense_event(img, roi, points,
 	intensity_perpix = inten_roi / area
 	
 	# filter the bbox whose max length >= max_len_bbox
-	score_perpix[roi_[:,2] - roi_[:,0] > max_len_bbox] = 0
-	score_perpix[roi_[:,3] - roi_[:,1] > max_len_bbox] = 0
-	
+	idx_bbox_largesize = np.where(
+		(roi_[:,2] - roi_[:,0] > max_len_bbox) & 
+		(roi_[:,3] - roi_[:,1] > max_len_bbox))[0]
+	score_perpix[idx_bbox_largesize] = 0
+	cnt_exten[idx_bbox_largesize] = 0
+
 	return score_perpix, intensity_perpix, cnt_exten
+
