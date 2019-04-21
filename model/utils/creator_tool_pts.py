@@ -57,7 +57,8 @@ class ProposalPointTargetCreator(object):
         """
         pos_roi_per_image = np.round(self.n_sample * self.pos_ratio)
         if method == 'intensity_event_per_pixel':
-            score_perpix, intensity_perpix, cnt_exten = bbox_score_intense_event(img, roi, points)
+            score_perpix, intensity_perpix, cnt_exten = bbox_score_intense_event(
+                img, roi, points)
             ## other methods TBD
 
         # select positive objects
@@ -176,10 +177,10 @@ class AnchorPointTargetCreator(object):
         label.fill(-1)
 
         score_perpix, intensity_perpix, cnt_exten = bbox_score_intense_event(
-            img, anchor, points, inside_index)
+            img, anchor, points)
 
         # assign positive examples
-        label[score > self.pos_score_thresh] = 1
+        label[score_perpix > self.pos_score_thresh] = 1
 
         # assign negative examples
         idx_neg = np.where(
