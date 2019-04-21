@@ -15,6 +15,8 @@ def bbox_score_intense_event(img, roi, points,
 	img_ = np.copy(img[0,:,:])
 	H, W = img_.shape
 	roi_ = np.round(np.copy(roi)).astype(int)
+	roi_[:,2] = np.minimum(roi_[:,2], H - 1)
+	roi_[:,3] = np.minimum(roi_[:,3], W - 1)
 	n_roi = roi.shape[0]
 	scores = np.zeros((n_roi,))
 	img_points = np.zeros_like(img_)
