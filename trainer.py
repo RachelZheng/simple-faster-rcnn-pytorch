@@ -149,7 +149,8 @@ class FasterRCNNTrainer(nn.Module):
         gt_rpn_label = self.anchor_target_creator(
             at.tonumpy(img),
             at.tonumpy(point),
-            anchor)
+            anchor, 
+            img_size)
 
         gt_rpn_label = at.totensor(gt_rpn_label).long()
         # gt_rpn_loc = at.totensor(gt_rpn_loc)

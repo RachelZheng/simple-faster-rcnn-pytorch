@@ -80,7 +80,7 @@ class ProposalPointTargetCreator(object):
 
         # The indices that we're selecting (both positive and negative).
         keep_index = np.append(pos_index, neg_index)
-        
+
         # for 2 classes cases, just make labels to be 1 and 0
         gt_roi_label = np.ones((self.n_sample, )).astype(int)
         gt_roi_label[pos_roi_per_this_image:] = 0  # negative labels --> 0
@@ -127,7 +127,7 @@ class AnchorPointTargetCreator(object):
         self.neg_score_thresh_lo = neg_score_thresh_lo
         self.pos_ratio = pos_ratio
 
-    def __call__(self, img, points, anchor):
+    def __call__(self, img, points, anchor, img_size):
         """Assign ground truth supervision to sampled subset of anchors.
 
         Types of input arrays and output arrays are same.
@@ -157,7 +157,7 @@ class AnchorPointTargetCreator(object):
 
         """
 
-        img_H, img_W = img.shape
+        img_H, img_W = img_size
 
         n_anchor = len(anchor)
         inside_index = _get_inside_index(anchor, img_H, img_W)
