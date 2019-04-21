@@ -98,6 +98,7 @@ env
 
 # macOS dir files
 .DS_Store
+*.DS_Store
 
 # Symbolic files
 tools/shared/cwrap_common.py
