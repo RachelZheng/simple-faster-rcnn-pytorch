@@ -72,7 +72,7 @@ class ProposalPointTargetCreator(object):
         neg_index = np.where((cnt_exten == 0) & (intensity_perpix > self.neg_score_thresh_lo) &
             (intensity_perpix < self.neg_score_thresh_hi))[0]
         neg_roi_per_this_image = self.n_sample - pos_roi_per_this_image
-            neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
+        neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
 
         if neg_index.size > 0:
             neg_index = np.random.choice(
@@ -160,8 +160,7 @@ class AnchorPointTargetCreator(object):
         n_anchor = len(anchor)
         inside_index = _get_inside_index(anchor, img_H, img_W)
         anchor = anchor[inside_index]
-        label = self._create_label(
-            img, inside_index, anchor, points)
+        label = self._create_label(img, inside_index, anchor, points)
 
         # map up to original set of anchors
         label = _unmap(label, n_anchor, inside_index, fill=-1)
