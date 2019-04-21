@@ -162,7 +162,7 @@ class FasterRCNNTrainer(nn.Module):
             self.rpn_sigma)
         """
         # NOTE: default value of ignore_index is -100 ...
-        ipdb.set_trace()
+        # ipdb.set_trace()
         rpn_cls_loss = F.cross_entropy(rpn_score, gt_rpn_label.cuda(), ignore_index=-1)
         _gt_rpn_label = gt_rpn_label[gt_rpn_label > -1]
         _rpn_score = at.tonumpy(rpn_score)[at.tonumpy(gt_rpn_label) > -1]
