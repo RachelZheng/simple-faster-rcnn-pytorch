@@ -31,17 +31,17 @@ def bbox_score_intense_event(img, roi, points,
 	img_ = np.cumsum(img_, axis=1)
 
 	## compute the average score of roi
-	inten_roi = (img_[(roi[:,2].flatten(), roi[:,3].flatten())] 
-		- img_[(roi[:,0].flatten(), roi[:,3].flatten())] 
-		- img_[(roi[:,2].flatten(), roi[:,1].flatten())]
-		+ img_[(roi[:,0].flatten(), roi[:,1].flatten())])
+	inten_roi = (img_[(roi_[:,2].flatten(), roi_[:,3].flatten())] 
+		- img_[(roi_[:,0].flatten(), roi_[:,3].flatten())] 
+		- img_[(roi_[:,2].flatten(), roi_[:,1].flatten())]
+		+ img_[(roi_[:,0].flatten(), roi_[:,1].flatten())])
 	
-	pts_roi = (img_points[(roi[:,2].flatten(), roi[:,3].flatten())] 
-		- img_points[(roi[:,0].flatten(), roi[:,3].flatten())] 
-		- img_points[(roi[:,2].flatten(), roi[:,1].flatten())]
-		+ img_points[(roi[:,0].flatten(), roi[:,1].flatten())])
+	pts_roi = (img_points[(roi_[:,2].flatten(), roi_[:,3].flatten())] 
+		- img_points[(roi_[:,0].flatten(), roi_[:,3].flatten())] 
+		- img_points[(roi_[:,2].flatten(), roi_[:,1].flatten())]
+		+ img_points[(roi_[:,0].flatten(), roi_[:,1].flatten())])
 
-	area = (roi[:,3] - roi[:,1]) * (roi[:,2] - roi[:,0])
+	area = (roi_[:,3] - roi_[:,1]) * (roi_[:,2] - roi_[:,0])
 
 	# make sure negative bboxes should be away from event at least neg_dist
 	roi_[:,:2] = np.maximum(roi_[:,:2] - neg_dist,0)
