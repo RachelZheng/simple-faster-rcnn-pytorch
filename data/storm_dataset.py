@@ -12,7 +12,7 @@ class StormDataset:
 		sub_dataset='all', split='trainval'):
 		if sub_dataset == 'all':
 			id_list_file = os.path.join(
-				split_dir, '{}.txt'.format(sub_dataset))
+				split_dir, '{}.txt'.format(split))
 		else:
 			id_list_file = os.path.join(
 				split_dir, '{}_{}.txt'.format(sub_dataset, split))
