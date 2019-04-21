@@ -83,7 +83,7 @@ class ProposalPointTargetCreator(object):
         keep_index = np.append(pos_index, neg_index)
 
         # for 2 classes cases, just make labels to be 1 and 0
-        gt_roi_label = np.ones((self.n_sample, )).astype(int)
+        gt_roi_label = np.ones((pos_roi_per_this_image + neg_roi_per_this_image,)).astype(int)
         gt_roi_label[pos_roi_per_this_image:] = 0  # negative labels --> 0
         sample_roi = roi[keep_index]
 
