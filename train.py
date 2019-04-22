@@ -56,7 +56,7 @@ def eval(dataloader, faster_rcnn, test_num=10000):
 def train(**kwargs):
     opt._parse(kwargs)
 
-    dataset = Dataset(opt)
+    dataset = Dataset(opt, split='test')  # temp setting
     print('load data')
     logger = Logger('./logs')
 
