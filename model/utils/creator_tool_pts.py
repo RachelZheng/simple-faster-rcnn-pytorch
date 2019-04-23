@@ -77,14 +77,29 @@ class ProposalPointTargetCreator(object):
 
         # Select background RoIs as whose intensity within
         # [neg_iou_thresh_lo, neg_iou_thresh_hi) and score == 0
-        neg_index = np.where((cnt_exten == 0) & (intensity_perpix > self.neg_score_thresh_lo) &
+        neg_index = np.where((cnt_exten == 0) & 
+            (intensity_perpix > self.neg_score_thresh_lo) &
             (intensity_perpix < self.neg_score_thresh_hi))[0]
-        neg_roi_per_this_image = self.n_sample - pos_roi_per_this_image
-        neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
 
+        # add more negative examples
+        neg_index_candidate = np.where((cnt_exten == 0) &
+            (intensity_perpix < self.neg_score_thresh_lo))[0]
+
+        neg_roi_per_this_image = self.n_sample - pos_roi_per_this_image
+        if neg_index.size < neg_roi_per_this_image:
+            neg_index_candidate = np.random.choice(
+                neg_index_candidate, size=neg_roi_per_this_image - neg_index.size, replace=False)
+            neg_index = np.append(neg_index, neg_index_candidate)
+        elif neg_index.size > 0:
+            neg_index = np.random.choice(
+                neg_index, size=neg_roi_per_this_image, replace=False)
+        
+        """
+        neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
         if neg_index.size > 0:
             neg_index = np.random.choice(
                 neg_index, size=neg_roi_per_this_image, replace=False)
+        """
 
         # The indices that we're selecting (both positive and negative).
         keep_index = np.append(pos_index, neg_index)
