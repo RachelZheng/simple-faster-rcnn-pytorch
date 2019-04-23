@@ -331,12 +331,12 @@ class ProposalCreator:
 
     def __init__(self,
                  parent_model,
-                 nms_thresh=0.7,
+                 nms_thresh=0.9,
                  n_train_pre_nms=12000,
                  n_train_post_nms=2000,
                  n_test_pre_nms=6000,
                  n_test_post_nms=300,
-                 min_size=16
+                 min_size=100
                  ):
         self.parent_model = parent_model
         self.nms_thresh = nms_thresh
