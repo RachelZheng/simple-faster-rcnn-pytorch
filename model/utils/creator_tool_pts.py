@@ -83,12 +83,14 @@ class ProposalPointTargetCreator(object):
 
         # add more negative examples
         neg_index_candidate = np.where((cnt_exten == 0) &
-            (intensity_perpix < self.neg_score_thresh_lo))[0]
+            (intensity_perpix <= self.neg_score_thresh_lo))[0]
 
         neg_roi_per_this_image = self.n_sample - pos_roi_per_this_image
         if neg_index.size < neg_roi_per_this_image:
             neg_index_candidate = np.random.choice(
-                neg_index_candidate, size=neg_roi_per_this_image - neg_index.size, replace=False)
+                neg_index_candidate, 
+                size=min(neg_index_candidate.size, neg_roi_per_this_image - neg_index.size),
+                replace=False)
             neg_index = np.append(neg_index, neg_index_candidate)
         elif neg_index.size > 0:
             neg_index = np.random.choice(
