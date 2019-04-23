@@ -59,8 +59,8 @@ class ProposalPointTargetCreator(object):
 
         ## manually create some bboxes
         _, H, W = img.shape
-        bbox = self.create_bbox(points, img_size=(H, W))
-        roi = np.concatenate((roi, bbox), axis=0)
+        # bbox = self.create_bbox(points, img_size=(H, W))
+        # roi = np.concatenate((roi, bbox), axis=0)
 
 
         if method == 'intensity_event_per_pixel':

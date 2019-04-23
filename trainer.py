@@ -183,7 +183,7 @@ class FasterRCNNTrainer(nn.Module):
         """
         gt_roi_label = at.totensor(gt_roi_label).long()
         roi_cls_loss = nn.CrossEntropyLoss()(roi_score, gt_roi_label.cuda())
-
+        ipdb.set_trace()
         self.roi_cm.add(at.totensor(roi_score, False), gt_roi_label.data.long())
 
         # losses = [rpn_loc_loss, rpn_cls_loss, roi_loc_loss, roi_cls_loss]
