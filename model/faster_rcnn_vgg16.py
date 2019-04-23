@@ -8,7 +8,7 @@ from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
 
-import ipdb
+# import ipdb
 
 def decom_vgg16():
     # the 30th layer of features is relu of conv5_3
