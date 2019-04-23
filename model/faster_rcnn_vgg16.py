@@ -18,7 +18,7 @@ def decom_vgg16():
             model.load_state_dict(t.load(opt.caffe_pretrain_path))
     else:
         # model = vgg16(not opt.load_path)
-        model = vgg16()
+        model = vgg16(pretrained=True)
     features = list(model.features)[:30]
     classifier = model.classifier
     classifier = list(classifier)
@@ -28,7 +28,9 @@ def decom_vgg16():
         del classifier[2]
     classifier = nn.Sequential(*classifier)
     # freeze top4 conv
-    for layer in features[:10]:
+    n = 30
+    # fix all the layers
+    for layer in features[:n]:
         for p in layer.parameters():
             p.requires_grad = False
     return nn.Sequential(*features), classifier
