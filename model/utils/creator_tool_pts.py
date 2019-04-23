@@ -96,6 +96,7 @@ class ProposalPointTargetCreator(object):
             neg_index = np.random.choice(
                 neg_index, size=neg_roi_per_this_image, replace=False)
         
+        neg_roi_per_this_image = neg_index.size
         """
         neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
         if neg_index.size > 0:
