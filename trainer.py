@@ -162,7 +162,6 @@ class FasterRCNNTrainer(nn.Module):
             self.rpn_sigma)
         """
         # NOTE: default value of ignore_index is -100 ...
-        # ipdb.set_trace()
         rpn_cls_loss = F.cross_entropy(rpn_score, gt_rpn_label.cuda(), ignore_index=-1)
         _gt_rpn_label = gt_rpn_label[gt_rpn_label > -1]
         _rpn_score = at.tonumpy(rpn_score)[at.tonumpy(gt_rpn_label) > -1]
@@ -196,6 +195,7 @@ class FasterRCNNTrainer(nn.Module):
 
     def train_step(self, imgs, points, labels, scale):
         self.optimizer.zero_grad()
+        ipdb.set_trace()
         losses = self.forward(imgs, points, labels, scale)
         losses.total_loss.backward()
         self.optimizer.step()

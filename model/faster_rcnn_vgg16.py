@@ -129,13 +129,14 @@ class VGG16RoIHead(nn.Module):
 
         """
         # in case roi_indices is  ndarray
+
         roi_indices = at.totensor(roi_indices).float()
         rois = at.totensor(rois).float()
         indices_and_rois = t.cat([roi_indices[:, None], rois], dim=1)
         # NOTE: important: yx->xy
         xy_indices_and_rois = indices_and_rois[:, [0, 2, 1, 4, 3]]
         indices_and_rois =  xy_indices_and_rois.contiguous()
-
+        ipdb.set_trace()
         pool = self.roi(x, indices_and_rois)
         pool = pool.view(pool.size(0), -1)
         fc7 = self.classifier(pool)
