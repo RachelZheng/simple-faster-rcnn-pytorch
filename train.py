@@ -88,6 +88,9 @@ def train(**kwargs):
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
             img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
+            ## skip abnormal images and zero points
+            if len(img.shape) < 4 or len(points.shape) < 3 or points.shape[2] < 1 or img.shape[3] < 600:
+                continue
             trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
