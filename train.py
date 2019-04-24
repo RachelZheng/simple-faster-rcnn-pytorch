@@ -125,26 +125,26 @@ def train(**kwargs):
                 # roi confusion matrix
                 trainer.vis.img('roi_cm', at.totensor(trainer.roi_cm.conf, False).float())
             """
-            # if (ii + 1) % opt.plot_every == 0:
-            info = trainer.get_meter_data()
-            for tag, value in info.items():
-                logger.scalar_summary(tag + str(epoch), value, ii+1)
-            
-            # ipdb.set_trace()
-            ori_img_ = inverse_normalize(at.tonumpy(img[0]))
+            if (ii + 1) % opt.plot_every == 0:
+                info = trainer.get_meter_data()
+                for tag, value in info.items():
+                    logger.scalar_summary(tag + str(epoch), value, ii+1)
+                
+                # ipdb.set_trace()
+                ori_img_ = inverse_normalize(at.tonumpy(img[0]))
 
-            # plot image with points and bboxes
-            pred_img_ = vis_pts(ori_img_, at.tonumpy(points_[0]))
-            _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_], visualize=True)
-            pred_img_ = vis_bbox(pred_img_, 
-                at.tonumpy(_bboxes[0]), 
-                at.tonumpy(_labels[0]).reshape(-1),
-                at.tonumpy(_scores[0]))
+                # plot image with points and bboxes
+                pred_img_ = vis_pts(ori_img_, at.tonumpy(points_[0]))
+                _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_], visualize=True)
+                pred_img_ = vis_bbox(pred_img_, 
+                    at.tonumpy(_bboxes[0]), 
+                    at.tonumpy(_labels[0]).reshape(-1),
+                    at.tonumpy(_scores[0]))
 
-            key_img = 'img' + str(ii+1)
-            info = { key_img: pred_img_}
-            for tag, images in info.items():
-                logger.image_summary(tag, images, ii+1)
+                key_img = 'img' + str(ii+1)
+                info = { key_img: pred_img_}
+                for tag, images in info.items():
+                    logger.image_summary(tag, images, ii+1)
 
         eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
         lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
@@ -160,6 +160,7 @@ def train(**kwargs):
                                                   str(lr_),
                                                   str(eval_result['map']),
                                                   str(trainer.get_meter_data())))
+        
         # Log scalar values (scalar summary)
         logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
         for tag, value in trainer.get_meter_data().items():
