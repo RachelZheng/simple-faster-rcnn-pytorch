@@ -32,7 +32,7 @@ def pytorch_normalze(img):
     return appr -1~1 RGB
     """
     normalize = tvtsf.Normalize(mean=MEAN_IMG, std=STD_IMG)
-    img = normalize(t.from_numpy(img))
+    img = normalize(t.from_numpy(img).float())
     return img.numpy()
 
 

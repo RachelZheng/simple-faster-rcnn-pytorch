@@ -135,7 +135,7 @@ def train(**kwargs):
 
                 # plot image with points and bboxes
                 pred_img_ = vis_pts(ori_img_, at.tonumpy(points_[0]))
-                _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_.astype(np.float32)], visualize=True)
+                _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_], visualize=True)
                 pred_img_ = vis_bbox(pred_img_, 
                     at.tonumpy(_bboxes[0]), 
                     at.tonumpy(_labels[0]).reshape(-1),
