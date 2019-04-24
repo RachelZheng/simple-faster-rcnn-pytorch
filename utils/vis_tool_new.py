@@ -2,7 +2,6 @@
 import cv2, matplotlib
 import numpy as np
 import torch as t
-import ipdb
 
 
 def vis_pts(img, pts, clr=(0,0,255)):
@@ -15,7 +14,6 @@ def vis_pts(img, pts, clr=(0,0,255)):
 	# transpose (C, H, W) -> (H, W, C)
 	img_ = np.copy(img).transpose((1,2,0))
 	pts_ = np.round(np.copy(pts)).astype(int)
-	# ipdb.set_trace()
 	for pt in pts_:
 		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
 

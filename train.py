@@ -37,7 +37,8 @@ matplotlib.use('agg')
 def eval(dataloader, faster_rcnn, test_num=10000):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
     gt_bboxes, gt_labels, gt_difficults = list(), list(), list()
-    for ii, (imgs, sizes, gt_bboxes_, gt_labels_, gt_difficults_) in tqdm(enumerate(dataloader)):
+    # for ii, (imgs, sizes, gt_bboxes_, gt_labels_, gt_difficults_) in tqdm(enumerate(dataloader)):
+    for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
         sizes = [sizes[0][0].item(), sizes[1][0].item()]
         pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(imgs, [sizes])
         gt_bboxes += list(gt_bboxes_.numpy())
@@ -130,7 +131,6 @@ def train(**kwargs):
                 for tag, value in info.items():
                     logger.scalar_summary(tag + str(epoch), value, ii+1)
                 
-                # ipdb.set_trace()
                 ori_img_ = inverse_normalize(at.tonumpy(img[0]))
 
                 # plot image with points and bboxes
@@ -144,7 +144,7 @@ def train(**kwargs):
                 key_img = 'img' + str(ii+1)
                 info = { key_img: pred_img_}
                 for tag, images in info.items():
-                    logger.image_summary(tag, images, ii+1)
+                    logger.image_summary(tag, np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
         eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
         lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
