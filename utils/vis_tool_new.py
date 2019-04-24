@@ -15,7 +15,7 @@ def vis_pts(img, pts, clr=(0,0,255)):
 	img_ = np.copy(img).transpose((1,2,0))
 	pts_ = np.round(np.copy(pts)).astype(int)
 	for pt in pts_:
-		cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
+		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)	
 	img_ = img_.transpose((2, 0, 1))
@@ -35,7 +35,7 @@ def vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 	img_ = np.copy(img).transpose((1,2,0))
 	bbox_ = np.round(np.copy(bbox)).astype(int)
 	for bb in bbox_:
-		cv2.rectangle(img_, (bb[1],bb[0]),(bb[3],bb[2]), clr, 3)
+		img_ = cv2.rectangle(img_, (bb[1],bb[0]),(bb[3],bb[2]), clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)	
 	img_ = img_.transpose((2, 0, 1))
