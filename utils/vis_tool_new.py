@@ -20,7 +20,7 @@ def vis_pts(img, pts, clr=(0,0,255)):
 		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)	
-	img_ = img_.transpose((2, 0, 1))
+	img_ = img_.get().transpose((2, 0, 1))
 	return img_
 
 
@@ -40,5 +40,5 @@ def vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 		img_ = cv2.rectangle(img_, (bb[1],bb[0]),(bb[3],bb[2]), clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)	
-	img_ = img_.transpose((2, 0, 1))
+	img_ = img_.get().transpose((2, 0, 1))
 	return img_
