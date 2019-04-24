@@ -17,6 +17,7 @@ from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
 from utils import array_tool as at
 # from utils.vis_tool import visdom_bbox
+from utils.vis_tool_new import vis_pts, vis_bbox
 from utils.eval_tool import eval_detection_voc
 
 ## tensorboard recording
@@ -82,8 +83,6 @@ def train(**kwargs):
     best_map = 0
     lr_ = opt.lr
     for epoch in range(opt.epoch):
-        key_loss = 'loss' + str(epoch)
-        key_img = 'img' + str(epoch)
         trainer.reset_meters()
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
@@ -91,7 +90,12 @@ def train(**kwargs):
             ## skip abnormal images and zero points
             if len(img.shape) < 4 or len(points.shape) < 3 or points.shape[2] < 1 or img.shape[3] < 600:
                 continue
-            trainer.train_step(img, points, labels, scale)
+            ## --- just debug ----
+            if ii == 7433:
+                ipdb.set_trace()
+                trainer.train_step(img, points, labels, scale)
+            else:
+                trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
                 if os.path.exists(opt.debug_file):
@@ -125,9 +129,19 @@ def train(**kwargs):
                 for tag, value in info.items():
                     logger.scalar_summary(tag + str(epoch), value, ii+1)
                 
-                ipdb.set_trace()
+                # ipdb.set_trace()
                 ori_img_ = inverse_normalize(at.tonumpy(img[0]))
-                info = { key_img: ori_img_}
+
+                # plot image with points and bboxes
+                pred_img_ = vis_pts(ori_img_, at.tonumpy(points_[0]))
+                _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_], visualize=True)
+                pred_img_ = vis_bbox(pred_img_, 
+                    at.tonumpy(_bboxes[0]), 
+                    at.tonumpy(_labels[0]).reshape(-1),
+                    at.tonumpy(_scores[0]))
+
+                key_img = 'img' + str(ii+1)
+                info = { key_img: pred_img_}
                 for tag, images in info.items():
                     logger.image_summary(tag, images, ii+1)
 

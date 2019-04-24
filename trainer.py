@@ -195,7 +195,6 @@ class FasterRCNNTrainer(nn.Module):
 
     def train_step(self, imgs, points, labels, scale):
         self.optimizer.zero_grad()
-        # ipdb.set_trace()
         losses = self.forward(imgs, points, labels, scale)
         losses.total_loss.backward()
         self.optimizer.step()
