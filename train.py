@@ -124,7 +124,8 @@ def train(**kwargs):
                 info = trainer.get_meter_data()
                 for tag, value in info.items():
                     logger.scalar_summary(tag + str(epoch), value, ii+1)
- 
+                
+                ipdb.set_trace()
                 ori_img_ = inverse_normalize(at.tonumpy(img[0]))
                 info = { key_img: ori_img_}
                 for tag, images in info.items():

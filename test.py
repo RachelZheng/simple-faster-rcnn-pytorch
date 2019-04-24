@@ -34,6 +34,9 @@ dataset = Dataset(opt)
 logger = Logger('./logs')
 dataloader = data_.DataLoader(dataset, batch_size=1, 
 	shuffle=True, num_workers=opt.num_workers)
+
+
+
 dataloader_iterator = iter(dataloader)
 test = next(dataloader_iterator)
 img = test[0]
