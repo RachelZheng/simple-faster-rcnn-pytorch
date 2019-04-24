@@ -33,7 +33,7 @@ extractor, classifier = decom_vgg16()
 dataset = Dataset(opt)
 logger = Logger('./logs')
 dataloader = data_.DataLoader(dataset, batch_size=1, 
-	shuffle=True, num_workers=opt.num_workers)
+	shuffle=False, num_workers=opt.num_workers)
 
 
 
