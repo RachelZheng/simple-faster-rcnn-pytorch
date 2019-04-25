@@ -27,7 +27,6 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
         pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
         ## only consider single class for now
         for l in np.unique(np.concatenate((pred_label, gt_label)).astype(int)):
-            ipdb.set_trace()
             pred_mask_l = pred_label == l
             pred_bbox_l = pred_bbox[pred_mask_l]
             pred_score_l = pred_score[pred_mask_l]
@@ -40,12 +39,13 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
             gt_pt_l = gt_pt[gt_mask_l]
 
             match_score = bbox_event(pred_bbox_l, pred_score_l, gt_pt_l)
-            pts_catch_score[l].append(np.max(match_score, axis=0).tolist())
-            bbox_catch_score[l].append(np.max(match_score, axis=1).tolist())
-            bbox_total_score[l].append(pred_score_l.tolist())
+            pts_catch_score[l] += np.max(match_score, axis=0).tolist()
+            bbox_catch_score[l] += np.max(match_score, axis=1).tolist()
+            bbox_total_score[l] += pred_score_l.tolist()
 
     ## set all the scores below threshold as 0, compute prec and rec
     for l in pts_catch_score:
+        ipdb.set_trace()
         pts_catch_score_l = np.array(pts_catch_score[l])
         bbox_total_score_l = np.array(bbox_total_score[l])
         pts_catch_score_l = np.array(pts_catch_score[l])
@@ -53,9 +53,9 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
         
         # compute the score with 07 metric, 11 point metric
         for t in np.arange(0., 1.1, 0.1):
-            n_tp = len(np.where(pts_catch_score_l > t)[0])
-            n_bbox = len(np.where(bbox_total_score_l > t)[0])
-            n_t_pt = len(np.where(pts_catch_score_l > t)[0])
+            n_tp = len(np.where(pts_catch_score_l >= t)[0])
+            n_bbox = len(np.where(bbox_total_score_l >= t)[0])
+            n_t_pt = len(np.where(pts_catch_score_l >= t)[0])
             prec[l].append(n_t_pt / n_pts)
             rec[l].append(n_tp / max(n_bbox, 1))
 
