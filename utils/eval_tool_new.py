@@ -38,9 +38,16 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
             gt_mask_l = gt_label == l
             gt_pt_l = gt_pt[gt_mask_l]
 
-            match_score = bbox_event(pred_bbox_l, pred_score_l, gt_pt_l)
-            pts_catch_score[l] += np.max(match_score, axis=0).tolist()
-            bbox_catch_score[l] += np.max(match_score, axis=1).tolist()
+            if gt_pt_l.shape[0] == 0 and pred_bbox_l.shape[0] == 0:
+                continue
+            elif gt_pt_l.shape[0] == 0:
+                bbox_catch_score[l] += [0] * pred_bbox_l.shape[0]
+            elif pred_bbox_l.shape[0] == 0:
+                pts_catch_score[l] += [0] * gt_pt_l.shape[0]
+            else:
+                match_score = bbox_event(pred_bbox_l, pred_score_l, gt_pt_l)
+                pts_catch_score[l] += np.max(match_score, axis=0).tolist()
+                bbox_catch_score[l] += np.max(match_score, axis=1).tolist()
             bbox_total_score[l] += pred_score_l.tolist()
 
     ## set all the scores below threshold as 0, compute prec and rec
