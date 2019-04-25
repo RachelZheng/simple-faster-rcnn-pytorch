@@ -2,7 +2,7 @@
 from collections import defaultdict
 
 from model.utils.bbox_pts_tools import bbox_event
-
+import ipdb
 
 def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
 	pred_bboxes = iter(pred_bboxes)
@@ -24,6 +24,7 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
         pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
     	## only consider single class for now
 		for l in np.unique(np.concatenate((pred_label, gt_label)).astype(int)):
+            ipdb.set_trace()
             pred_mask_l = pred_label == l
             pred_bbox_l = pred_bbox[pred_mask_l]
             pred_score_l = pred_score[pred_mask_l]

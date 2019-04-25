@@ -47,12 +47,6 @@ def eval(dataloader, faster_rcnn, test_num=10000):
         pred_scores += pred_scores_
         if ii == test_num: break
 
-    """
-    result = eval_detection_voc(
-        pred_bboxes, pred_labels, pred_scores,
-        gt_bboxes, gt_labels, gt_difficults,
-        use_07_metric=True)
-    """
     result = eval_detection(
         pred_bboxes, pred_labels, pred_scores,
         gt_pts, gt_labels)
@@ -149,17 +143,19 @@ def train(**kwargs):
                 for tag, images in info.items():
                     logger.image_summary(tag, np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
+                # evaluation on every batch
                 eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
                 lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
                 print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
                     str(epoch), str(lr_), str(trainer.get_meter_data()), 
-                    str(eval_result['prec'][0]), str(eval_result['rec'][0])))
+                    str(eval_result['prec'][5]), str(eval_result['rec'][5])))
         
         # Log scalar values (scalar summary)
         # logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
         for tag, value in trainer.get_meter_data().items():
             logger.scalar_summary(tag, value, epoch+1)
 
+        """
         if eval_result['map'] > best_map:
             best_map = eval_result['map']
             best_path = trainer.save(best_map=best_map)
@@ -167,6 +163,7 @@ def train(**kwargs):
             trainer.load(best_path)
             trainer.faster_rcnn.scale_lr(opt.lr_decay)
             lr_ = lr_ * opt.lr_decay
+        """
 
         if epoch == 13: 
             break
