@@ -5,6 +5,7 @@ from model.utils.bbox_pts_tools import bbox_event
 import ipdb
 import itertools
 import six
+import numpy as np
 
 def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
     pred_bboxes = iter(pred_bboxes)
