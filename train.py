@@ -39,8 +39,7 @@ def eval(dataloader, faster_rcnn, test_num=100):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
     gt_pts, gt_labels = list(), list()
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-        _, _, H, W = img.shape
-        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [H,W])
+        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
         gt_pts += list(points_.numpy())
         gt_labels += list(labels_.numpy())
         pred_bboxes += pred_bboxes_
