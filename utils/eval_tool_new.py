@@ -5,7 +5,7 @@ from model.utils.bbox_pts_tools import bbox_event
 import ipdb
 
 def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
-	pred_bboxes = iter(pred_bboxes)
+    pred_bboxes = iter(pred_bboxes)
     pred_labels = iter(pred_labels)
     pred_scores = iter(pred_scores)
     gt_pts = iter(gt_pts)
@@ -22,8 +22,8 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
 
     for pred_bbox, pred_label, pred_score, gt_pt, gt_label in six.moves.zip(
         pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
-    	## only consider single class for now
-		for l in np.unique(np.concatenate((pred_label, gt_label)).astype(int)):
+        ## only consider single class for now
+        for l in np.unique(np.concatenate((pred_label, gt_label)).astype(int)):
             ipdb.set_trace()
             pred_mask_l = pred_label == l
             pred_bbox_l = pred_bbox[pred_mask_l]
