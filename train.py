@@ -35,7 +35,7 @@ resource.setrlimit(resource.RLIMIT_NOFILE, (20480, rlimit[1]))
 matplotlib.use('agg')
 
 
-def eval(dataloader, faster_rcnn, test_num=10000):
+def eval(dataloader, faster_rcnn, test_num=100):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
     gt_pts, gt_labels = list(), list()
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
