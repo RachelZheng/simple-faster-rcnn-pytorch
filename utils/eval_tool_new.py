@@ -57,5 +57,5 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
             rec[l].append(n_tp / max(n_bbox, 1))
 
         prec[l], rec[l] = np.array(prec[l]), np.array(rec[l])
-    
+
     return {'prec': prec, 'rec': rec}
