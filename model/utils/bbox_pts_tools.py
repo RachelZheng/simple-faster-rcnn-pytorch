@@ -66,3 +66,21 @@ def bbox_score_intense_event(img, roi, points,
 
 	return score_perpix, intensity_perpix, cnt_exten
 
+
+
+def bbox_event(roi, roi_score, points):
+	""" check the points are within the bbox or not
+	args:
+		roi: m x 4. np.array; in the sequence of ymin, xmin, ymax, xmax
+		roi_score: m, np.array
+		points: n x 2. np.array; in the sequence of y, x
+	"""
+	m, n = roi.shape[0], points.shape[0]
+	res = np.zeros((m, n))
+	for i, pt in enumerate(points):
+		idx = np.where((roi[:,0] <= pt[0]) &
+			(roi[:,1] <= pt[1]) & 
+			(roi[:,2] >= pt[0]) &
+			(roi[:,3] >= pt[1]))[0]
+		res[idx, i] = roi_score[idx]
+	return res

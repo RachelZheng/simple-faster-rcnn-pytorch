@@ -19,7 +19,8 @@ from trainer import FasterRCNNTrainer
 from utils import array_tool as at
 # from utils.vis_tool import visdom_bbox
 from utils.vis_tool_new import vis_pts, vis_bbox
-from utils.eval_tool import eval_detection_voc
+# from utils.eval_tool import eval_detection_voc
+from utils.eval_tool_new import eval_detection
 
 ## tensorboard recording
 from logger import Logger
@@ -36,23 +37,25 @@ matplotlib.use('agg')
 
 def eval(dataloader, faster_rcnn, test_num=10000):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
-    gt_bboxes, gt_labels, gt_difficults = list(), list(), list()
-    # for ii, (imgs, sizes, gt_bboxes_, gt_labels_, gt_difficults_) in tqdm(enumerate(dataloader)):
+    gt_pts, gt_labels = list(), list()
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-        sizes = [sizes[0][0].item(), sizes[1][0].item()]
-        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(imgs, [sizes])
-        gt_bboxes += list(gt_bboxes_.numpy())
-        gt_labels += list(gt_labels_.numpy())
-        gt_difficults += list(gt_difficults_.numpy())
+        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img)
+        gt_pts += list(points_.numpy())
+        gt_labels += list(labels_.numpy())
         pred_bboxes += pred_bboxes_
         pred_labels += pred_labels_
         pred_scores += pred_scores_
         if ii == test_num: break
 
+    """
     result = eval_detection_voc(
         pred_bboxes, pred_labels, pred_scores,
         gt_bboxes, gt_labels, gt_difficults,
         use_07_metric=True)
+    """
+    result = eval_detection(
+        pred_bboxes, pred_labels, pred_scores,
+        gt_pts, gt_labels)
     return result
 
 
@@ -146,23 +149,14 @@ def train(**kwargs):
                 for tag, images in info.items():
                     logger.image_summary(tag, np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
-        eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
-        lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
-        """
-        trainer.vis.plot('test_map', eval_result['map'])
-        log_info = 'lr:{}, map:{},loss:{}'.format(str(lr_),
-                                                  str(eval_result['map']),
-                                                  str(trainer.get_meter_data()))
-        trainer.vis.log(log_info)
-        """
-        ## add tensorboard logger
-        print ('epoch {}, lr:{}, map:{},loss:{}'.format(str(epoch),
-                                                  str(lr_),
-                                                  str(eval_result['map']),
-                                                  str(trainer.get_meter_data())))
+                eval_result = eval(test_dataloader, faster_rcnn, test_num=opt.test_num)
+                lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
+                print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
+                    str(epoch), str(lr_), str(trainer.get_meter_data()), 
+                    str(eval_result['prec'][0]), str(eval_result['rec'][0])))
         
         # Log scalar values (scalar summary)
-        logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
+        # logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
         for tag, value in trainer.get_meter_data().items():
             logger.scalar_summary(tag, value, epoch+1)
 
