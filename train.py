@@ -89,6 +89,7 @@ def train(**kwargs):
             ## skip abnormal images and zero points
             if len(img.shape) < 4 or len(points.shape) < 3 or points.shape[2] < 1 or img.shape[3] < 600:
                 continue
+            
             ## --- just debug ----
             if ii == 7433:
                 ipdb.set_trace()
@@ -145,11 +146,10 @@ def train(**kwargs):
 
         # evaluation on every batch
         eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
-        ipdb.set_trace()
         lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
         print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
             str(epoch), str(lr_), str(trainer.get_meter_data()), 
-            str(eval_result['prec'][2]), str(eval_result['rec'][2])))
+            str(eval_result['prec'][0][2]), str(eval_result['rec'][0][2])))
         
         # Log scalar values (scalar summary)
         # logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
@@ -167,8 +167,8 @@ def train(**kwargs):
         """
         # save the model for every epoch
         path = trainer.save(n_epoch=epoch,
-            prec=np.round(eval_result['prec'][2], 2),
-            rec=np.round(eval_result['rec'][2], 2))
+            prec=np.round(eval_result['prec'][0][2], 2),
+            rec=np.round(eval_result['rec'][0][2], 2))
 
 
         if epoch == 13: 
