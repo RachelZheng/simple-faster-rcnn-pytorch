@@ -34,6 +34,31 @@ rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
 resource.setrlimit(resource.RLIMIT_NOFILE, (20480, rlimit[1]))
 
 matplotlib.use('agg')
+
+def debug(**kwargs):
+    opt._parse(kwargs)
+
+    dataset = Dataset(opt)  # temp setting
+    print('load data')
+    logger = Logger('./logs')
+
+    dataloader = data_.DataLoader(dataset, \
+                                  batch_size=1, \
+                                  shuffle=False, \
+                                  num_workers=opt.num_workers)
+    
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+    print('model construct completed')
+    trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+    best_map = 0
+    lr_ = opt.lr
+    (img, points_, labels_, scale) = dataset.__getitem__(7433)
+    scale = at.scalar(scale)
+    img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
+    trainer.train_step(img, points, labels, scale)
+
+
+
 def train(**kwargs):
     opt._parse(kwargs)
 
