@@ -143,13 +143,13 @@ def train(**kwargs):
                 for tag, images in info.items():
                     logger.image_summary(tag, np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
-            # evaluation on every batch
-            eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
-            ipdb.set_trace()
-            lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
-            print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
-                str(epoch), str(lr_), str(trainer.get_meter_data()), 
-                str(eval_result['prec'][2]), str(eval_result['rec'][2])))
+        # evaluation on every batch
+        eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
+        ipdb.set_trace()
+        lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
+        print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
+            str(epoch), str(lr_), str(trainer.get_meter_data()), 
+            str(eval_result['prec'][2]), str(eval_result['rec'][2])))
         
         # Log scalar values (scalar summary)
         # logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
