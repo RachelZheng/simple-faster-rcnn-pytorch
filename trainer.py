@@ -105,7 +105,6 @@ class FasterRCNNTrainer(nn.Module):
             self.faster_rcnn.rpn(features, img_size, scale)
 
         # Since batch size is one, convert variables to singular form
-        ipdb.set_trace()
         img = imgs[0]
         point = points[0]
         label = labels[0]

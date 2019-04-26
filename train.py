@@ -90,12 +90,7 @@ def train(**kwargs):
             if len(img.shape) < 4 or len(points.shape) < 3 or points.shape[2] < 1 or img.shape[3] < 600:
                 continue
             
-            ## --- just debug ----
-            if ii == 7433:
-                ipdb.set_trace()
-                trainer.train_step(img, points, labels, scale)
-            else:
-                trainer.train_step(img, points, labels, scale)
+            trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
                 if os.path.exists(opt.debug_file):
@@ -169,7 +164,6 @@ def train(**kwargs):
         path = trainer.save(n_epoch=epoch,
             prec=np.round(eval_result['prec'][0][2], 2),
             rec=np.round(eval_result['rec'][0][2], 2))
-
 
         if epoch == 13: 
             break
