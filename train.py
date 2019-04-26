@@ -145,6 +145,7 @@ def train(**kwargs):
 
             # evaluation on every batch
             eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
+            ipdb.set_trace()
             lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
             print('epoch {}, lr:{}, loss:{}, precision:{}, recall:{}\n'.format(
                 str(epoch), str(lr_), str(trainer.get_meter_data()), 
