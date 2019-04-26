@@ -110,7 +110,10 @@ class Transform(object):
 class Dataset:
     def __init__(self, opt, split='train'):
         self.opt = opt
-        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
+        if split == 'inference':
+            self.db = StormDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir, split=split)
+        else:
+            self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
         self.tsf = Transform(opt.min_size, opt.max_size)
 
     def __getitem__(self, idx):

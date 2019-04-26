@@ -46,8 +46,8 @@ class StormDataset:
 		labels = list()
 
 		if self.bool_inference:
-			name_img = os.path.join(self.inference_dir, self.inference_idx2imgname(id_img))
-			img = read_image(name_img, color=True)
+			img = read_image(
+				os.path.join(self.data_dir, self.inference_idx2imgname(id_img)), color=True)
 
 		else:		
 			name_xml = os.path.join(self.annotation_dir, '{:07d}.xml'.format(id_img))
