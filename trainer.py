@@ -163,9 +163,10 @@ class FasterRCNNTrainer(nn.Module):
         """
         # NOTE: default value of ignore_index is -100 ...
         rpn_cls_loss = F.cross_entropy(rpn_score, gt_rpn_label.cuda(), ignore_index=-1)
-        _gt_rpn_label = gt_rpn_label[gt_rpn_label > -1]
-        _rpn_score = at.tonumpy(rpn_score)[at.tonumpy(gt_rpn_label) > -1]
-        self.rpn_cm.add(at.totensor(_rpn_score, False), _gt_rpn_label.data.long())
+        if gt_rpn_label.max() > -1:
+            _gt_rpn_label = gt_rpn_label[gt_rpn_label > -1]
+            _rpn_score = at.tonumpy(rpn_score)[at.tonumpy(gt_rpn_label) > -1]
+            self.rpn_cm.add(at.totensor(_rpn_score, False), _gt_rpn_label.data.long())
 
         # ------------------ ROI losses (fast rcnn loss) -------------------#
         """
