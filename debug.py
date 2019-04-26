@@ -3,6 +3,7 @@ from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
 import sys
 # sys.path.insert(0, "/pylon5/ir5fp5p/xzheng4/conda_install/envs/py3/lib/python3.6/site-packages/")
+import torch as t
 
 import cupy as cp
 import os
@@ -53,8 +54,7 @@ def debug(**kwargs):
     best_map = 0
     lr_ = opt.lr
     (img, points_, labels_, scale) = dataset.__getitem__(7433)
-    scale = at.scalar(scale)
-    img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
+    img, points, labels = t.from_numpy(img).cuda().float(), t.from_numpy(points_).cuda(), t.from_numpy(labels_).cuda()
     trainer.train_step(img, points, labels, scale)
 
 
