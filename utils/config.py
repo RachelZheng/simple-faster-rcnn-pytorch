@@ -10,9 +10,11 @@ class Config:
     prefixes = ('/pylon5/ir5fp5p/xzheng4/data_meteo/', 
         '/oasis/projects/nsf/pen150/xinye/data_meteo/')
     prefix = prefixes[0]
-    data_dir = os.path.join(prefix, 'ref_grayscale/')
+    data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
     annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
+    inference_dir = os.path.join(prefix, 'model_ref_new/')
+
     min_size = 600  # image resize
     max_size = 1000 # image resize
     num_workers = 8

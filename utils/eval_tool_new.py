@@ -2,7 +2,6 @@
 from collections import defaultdict
 
 from model.utils.bbox_pts_tools import bbox_event
-import ipdb
 import itertools
 import six
 import numpy as np
@@ -52,15 +51,14 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
 
     ## set all the scores below threshold as 0, compute prec and rec
     for l in pts_catch_score:
-        ipdb.set_trace()
         pts_catch_score_l = np.array(pts_catch_score[l])
+        bbox_catch_score_l = np.array(bbox_catch_score[l])
         bbox_total_score_l = np.array(bbox_total_score[l])
-        pts_catch_score_l = np.array(pts_catch_score[l])
         n_pts = max(len(pts_catch_score_l),1)
         
         # compute the score with 07 metric, 11 point metric
         for t in np.arange(0., 1.1, 0.1):
-            n_tp = len(np.where(pts_catch_score_l >= t)[0])
+            n_tp = len(np.where(bbox_catch_score_l >= t)[0])
             n_bbox = len(np.where(bbox_total_score_l >= t)[0])
             n_t_pt = len(np.where(pts_catch_score_l >= t)[0])
             prec[l].append(n_t_pt / n_pts)
