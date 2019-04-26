@@ -94,15 +94,16 @@ class Transform(object):
         img = preprocess(img, self.min_size, self.max_size)
         _, o_H, o_W = img.shape
         scale = o_H / H
-        points = util.resize_pts(points, (H, W), (o_H, o_W))
-
         # horizontally flip
         img, params = util.random_flip(img, x_random=True, return_param=True)
-        points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
 
-        # keep the points within the range
-        points[:,0] = np.clip(points[:,0], 1, o_H)
-        points[:,1] = np.clip(points[:,1], 1, o_W)
+        if points is not None:
+            points = util.resize_pts(points, (H, W), (o_H, o_W))
+            points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
+
+            # keep the points within the range
+            points[:,0] = np.clip(points[:,0], 1, o_H)
+            points[:,1] = np.clip(points[:,1], 1, o_W)
         
         return img, points, labels, scale
 

@@ -42,14 +42,16 @@ class StormDataset:
 		""" get the i-th example
 		"""
 		id_img = self.ids[i]
-		points = list()
-		labels = list()
 
 		if self.bool_inference:
 			img = read_image(
 				os.path.join(self.data_dir, self.inference_idx2imgname(id_img)), color=True)
+			points = None
+			labels = None
 
-		else:		
+		else:	
+			points = list()
+			labels = list()	
 			name_xml = os.path.join(self.annotation_dir, '{:07d}.xml'.format(id_img))
 			anno = ET.parse(name_xml).getroot()
 			img = read_image(os.path.join(self.data_dir, anno.find("filename").text), color=True)
@@ -66,8 +68,8 @@ class StormDataset:
 				## in this case labels are all 0
 				labels.append(0)
 
-		points = np.stack(points).astype(np.float32)
-		labels = np.stack(labels).astype(np.int32)
+			points = np.stack(points).astype(np.float32)
+			labels = np.stack(labels).astype(np.int32)
 
 		return img, points, labels
 

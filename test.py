@@ -17,7 +17,7 @@ from utils.config import opt
 from torch.utils import data as data_
 from collections import namedtuple
 
-from data.dataset import Dataset, TestDataset, inverse_normalize
+from data.dataset import Dataset, inverse_normalize
 
 from logger import Logger
 
