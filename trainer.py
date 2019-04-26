@@ -14,7 +14,7 @@ from utils import array_tool as at
 from utils.config import opt
 from torchnet.meter import ConfusionMeter, AverageValueMeter
 
-# import ipdb
+import ipdb
 
 LossTuple = namedtuple('LossTuple',
                        ['rpn_cls_loss',
@@ -105,7 +105,7 @@ class FasterRCNNTrainer(nn.Module):
             self.faster_rcnn.rpn(features, img_size, scale)
 
         # Since batch size is one, convert variables to singular form
-        # bbox = bboxes[0]
+        ipdb.set_trace()
         img = imgs[0]
         point = points[0]
         label = labels[0]
@@ -183,7 +183,6 @@ class FasterRCNNTrainer(nn.Module):
         """
         gt_roi_label = at.totensor(gt_roi_label).long()
         roi_cls_loss = nn.CrossEntropyLoss()(roi_score, gt_roi_label.cuda())
-        # ipdb.set_trace()
         self.roi_cm.add(at.totensor(roi_score, False), gt_roi_label.data.long())
 
         # losses = [rpn_loc_loss, rpn_cls_loss, roi_loc_loss, roi_cls_loss]
