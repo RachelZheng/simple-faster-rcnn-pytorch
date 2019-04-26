@@ -54,7 +54,7 @@ def debug(**kwargs):
     best_map = 0
     lr_ = opt.lr
     (img, points_, labels_, scale) = dataset.__getitem__(7433)
-    img, points, labels = t.from_numpy(img).cuda().float(), t.from_numpy(points_).cuda(), t.from_numpy(labels_).cuda()
+    img, points, labels = t.from_numpy(np.expand_dims(img, axis=0)).cuda().float(), t.from_numpy(points_).cuda(), t.from_numpy(labels_).cuda()
     trainer.train_step(img, points, labels, scale)
 
 
