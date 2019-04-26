@@ -123,22 +123,3 @@ class Dataset:
 
     def __len__(self):
         return len(self.db)
-
-
-
-class TestDataset:
-    def __init__(self, opt, split='test'):
-        self.opt = opt
-        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
-        self.tsf = Transform(opt.min_size, opt.max_size)
-
-    def __getitem__(self, idx):
-        ori_img, points, labels = self.db.get_example(idx)
-
-        # img = preprocess(ori_img)
-        # return img, ori_img.shape[1:], points, labels
-        img, points, labels, scale = self.tsf((ori_img, points, labels))
-        return img.copy(), points.copy(), labels.copy(), scale
-
-    def __len__(self):
-        return len(self.db)

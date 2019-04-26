@@ -53,7 +53,7 @@ def debug(**kwargs):
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     best_map = 0
     lr_ = opt.lr
-    (img, points_, labels_, scale) = dataset.__getitem__(7433)
+    (img, points_, labels_, scale) = dataset.__getitem__(1)
     img, points, labels = t.from_numpy(np.expand_dims(img, axis=0)).cuda().float(), t.from_numpy(np.expand_dims(points_, axis=0)).cuda(), t.from_numpy(np.expand_dims(labels_, axis=0)).cuda()
     trainer.train_step(img, points, labels, scale)
 

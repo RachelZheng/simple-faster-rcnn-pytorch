@@ -59,9 +59,6 @@ class ProposalPointTargetCreator(object):
 
         ## manually create some bboxes
         _, H, W = img.shape
-        # bbox = self.create_bbox(points, img_size=(H, W))
-        # roi = np.concatenate((roi, bbox), axis=0)
-
 
         if method == 'intensity_event_per_pixel':
             score_perpix, intensity_perpix, cnt_exten = bbox_score_intense_event(
@@ -76,7 +73,6 @@ class ProposalPointTargetCreator(object):
                 pos_index, size=pos_roi_per_this_image, replace=False)
 
         # Select background RoIs as whose intensity within
-        # [neg_iou_thresh_lo, neg_iou_thresh_hi) and score == 0
         neg_index = np.where((cnt_exten == 0) & 
             (intensity_perpix > self.neg_score_thresh_lo) &
             (intensity_perpix < self.neg_score_thresh_hi))[0]
@@ -97,12 +93,6 @@ class ProposalPointTargetCreator(object):
                 neg_index, size=neg_roi_per_this_image, replace=False)
         
         neg_roi_per_this_image = neg_index.size
-        """
-        neg_roi_per_this_image = int(min(neg_roi_per_this_image, neg_index.size))
-        if neg_index.size > 0:
-            neg_index = np.random.choice(
-                neg_index, size=neg_roi_per_this_image, replace=False)
-        """
 
         # The indices that we're selecting (both positive and negative).
         keep_index = np.append(pos_index, neg_index)
@@ -114,11 +104,6 @@ class ProposalPointTargetCreator(object):
 
         return sample_roi, gt_roi_label
 
-
-    def create_bbox(self, points, img_size, sizes=(100,200,250,280,300)):
-        """ manually create bboxes from ground_truth 
-        """
-        pass 
 
 class AnchorPointTargetCreator(object):
     """Assign the ground truth bounding boxes to anchors.

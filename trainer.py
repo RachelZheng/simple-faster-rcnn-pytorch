@@ -115,14 +115,6 @@ class FasterRCNNTrainer(nn.Module):
         # Sample RoIs and forward
         # it's fine to break the computation graph of rois, 
         # consider them as constant input
-        """
-        sample_roi, gt_roi_loc, gt_roi_label = self.proposal_target_creator(
-            roi,
-            at.tonumpy(bbox),
-            at.tonumpy(label),
-            self.loc_normalize_mean,
-            self.loc_normalize_std)
-        """
         # ----- custom choice of roi --------
         sample_roi, gt_roi_label = self.proposal_target_creator(
             at.tonumpy(img),
@@ -138,12 +130,6 @@ class FasterRCNNTrainer(nn.Module):
             sample_roi_index)
 
         # ------------------ RPN losses -------------------#
-        """
-        gt_rpn_loc, gt_rpn_label = self.anchor_target_creator(
-            at.tonumpy(bbox),
-            anchor,
-            img_size)
-        """
         gt_rpn_label = self.anchor_target_creator(
             at.tonumpy(img),
             at.tonumpy(point),
@@ -153,13 +139,6 @@ class FasterRCNNTrainer(nn.Module):
         gt_rpn_label = at.totensor(gt_rpn_label).long()
         # gt_rpn_loc = at.totensor(gt_rpn_loc)
 
-        """
-        rpn_loc_loss = _fast_rcnn_loc_loss(
-            rpn_loc,
-            gt_rpn_loc,
-            gt_rpn_label.data,
-            self.rpn_sigma)
-        """
         # NOTE: default value of ignore_index is -100 ...
         rpn_cls_loss = F.cross_entropy(rpn_score, gt_rpn_label.cuda(), ignore_index=-1)
         if gt_rpn_label.max() > -1:
@@ -168,24 +147,10 @@ class FasterRCNNTrainer(nn.Module):
             self.rpn_cm.add(at.totensor(_rpn_score, False), _gt_rpn_label.data.long())
 
         # ------------------ ROI losses (fast rcnn loss) -------------------#
-        """
-        n_sample = roi_cls_loc.shape[0]
-        roi_cls_loc = roi_cls_loc.view(n_sample, -1, 4)
-        roi_loc = roi_cls_loc[t.arange(0, n_sample).long().cuda(), \
-                              at.totensor(gt_roi_label).long()]
-        gt_roi_loc = at.totensor(gt_roi_loc)
-
-        roi_loc_loss = _fast_rcnn_loc_loss(
-            roi_loc.contiguous(),
-            gt_roi_loc,
-            gt_roi_label.data,
-            self.roi_sigma)
-        """
         gt_roi_label = at.totensor(gt_roi_label).long()
         roi_cls_loss = nn.CrossEntropyLoss()(roi_score, gt_roi_label.cuda())
         self.roi_cm.add(at.totensor(roi_score, False), gt_roi_label.data.long())
 
-        # losses = [rpn_loc_loss, rpn_cls_loss, roi_loc_loss, roi_cls_loss]
         losses = [rpn_cls_loss, roi_cls_loss]
         losses = losses + [sum(losses)]
 
@@ -233,7 +198,6 @@ class FasterRCNNTrainer(nn.Module):
             os.makedirs(save_dir)
 
         t.save(save_dict, save_path)
-        # self.vis.save([self.vis.env])
         return save_path
 
 

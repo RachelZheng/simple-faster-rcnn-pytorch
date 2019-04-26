@@ -14,6 +14,9 @@ class Config:
     annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
     inference_dir = os.path.join(prefix, 'model_ref_new/')
+    inference_out_dir = os.path.join(prefix, 'model_inference_result/')
+    model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'
+    model_name = 'fasterrcnn_04260426_0_0.98_0.42'
 
     min_size = 600  # image resize
     max_size = 1000 # image resize
@@ -41,8 +44,6 @@ class Config:
     use_adam = False # Use Adam optimizer
     use_chainer = False # try match everything as chainer
     use_drop = False # use dropout in RoIHead
-    # debug
-    # debug_file = '/pylon5/ir5fp5p/xzheng4/temp/'
 
     test_num = 10000
     # model

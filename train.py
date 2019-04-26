@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
 import sys
-# sys.path.insert(0, "/pylon5/ir5fp5p/xzheng4/conda_install/envs/py3/lib/python3.6/site-packages/")
 
 import cupy as cp
 import os
@@ -17,9 +16,7 @@ from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
 from utils import array_tool as at
-# from utils.vis_tool import visdom_bbox
 from utils.vis_tool_new import vis_pts, vis_bbox
-# from utils.eval_tool import eval_detection_voc
 from utils.eval_tool_new import eval_detection
 
 ## tensorboard recording
@@ -34,12 +31,29 @@ resource.setrlimit(resource.RLIMIT_NOFILE, (20480, rlimit[1]))
 
 matplotlib.use('agg')
 
+def inference(**kwargs):
+    opt._parse(kwargs)
+    print('load data')
+    dataset = Dataset(opt, split='inference')
+    dataloader = data_.DataLoader(dataset, \
+                                  batch_size=1, \
+                                  shuffle=False, \
+                                  num_workers=opt.num_workers)
+
+    print('load model')
+    trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+    trainer.load(opt.model_dir)
+    for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
+        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
+            img, [img.shape[2:]])
+
 
 def eval(dataloader, faster_rcnn, test_num=100):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
     gt_pts, gt_labels = list(), list()
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
+        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
+            img, [img.shape[2:]])
         gt_pts += list(points_.numpy())
         gt_labels += list(labels_.numpy())
         pred_bboxes += pred_bboxes_
@@ -56,16 +70,16 @@ def eval(dataloader, faster_rcnn, test_num=100):
 def train(**kwargs):
     opt._parse(kwargs)
 
-    dataset = Dataset(opt)  # temp setting
+    dataset = Dataset(opt, split='train')
     print('load data')
     logger = Logger('./logs')
 
     dataloader = data_.DataLoader(dataset, \
                                   batch_size=1, \
-                                  shuffle=False, \
+                                  shuffle=True, \
                                   # pin_memory=True,
                                   num_workers=opt.num_workers)
-    testset = TestDataset(opt)
+    testset = Dataset(opt, split='test')
     test_dataloader = data_.DataLoader(testset,
                                        batch_size=1,
                                        num_workers=opt.test_num_workers,
@@ -128,7 +142,8 @@ def train(**kwargs):
 
                 # plot image with points and bboxes
                 pred_img_ = vis_pts(ori_img_, at.tonumpy(points_[0]))
-                _bboxes, _labels, _scores = trainer.faster_rcnn.predict([ori_img_], visualize=True)
+                _bboxes, _labels, _scores = trainer.faster_rcnn.predict(
+                    [ori_img_], visualize=True)
                 pred_img_ = vis_bbox(pred_img_, 
                     at.tonumpy(_bboxes[0]), 
                     at.tonumpy(_labels[0]).reshape(-1),
@@ -137,7 +152,8 @@ def train(**kwargs):
                 key_img = 'img' + str(ii+1)
                 info = { key_img: pred_img_}
                 for tag, images in info.items():
-                    logger.image_summary(tag, np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
+                    logger.image_summary(tag, 
+                        np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
         # evaluation on every batch
         eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
