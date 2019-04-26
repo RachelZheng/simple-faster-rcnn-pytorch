@@ -123,7 +123,7 @@ class Dataset:
 
         # TODO: check whose stride is negative to fix this instead copy all
         # some of the strides of a given numpy array are negative.
-        return img.copy(), points.copy(), labels.copy(), scale
+        return img.copy(), points, labels, scale
 
     def __len__(self):
         return len(self.db)
