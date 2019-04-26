@@ -46,15 +46,9 @@ def train(**kwargs):
                                   shuffle=False, \
                                   num_workers=opt.num_workers)
     
-    ipdb.set_trace()
-
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
     print('model construct completed')
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-    if opt.load_path:
-        trainer.load(opt.load_path)
-        print('load pretrained model from %s' % opt.load_path)
-    # trainer.vis.text(dataset.db.label_names, win='labels')
     best_map = 0
     lr_ = opt.lr
     for epoch in range(opt.epoch):

@@ -100,6 +100,10 @@ class Transform(object):
         img, params = util.random_flip(img, x_random=True, return_param=True)
         points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
 
+        # keep the points within the range
+        points[:,0] = np.clip(points[:,0], 1, o_H)
+        points[:,1] = np.clip(points[:,1], 1, o_W)
+        
         return img, points, labels, scale
 
 
@@ -127,7 +131,7 @@ class TestDataset:
         self.opt = opt
         self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
         self.tsf = Transform(opt.min_size, opt.max_size)
-        
+
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
 
