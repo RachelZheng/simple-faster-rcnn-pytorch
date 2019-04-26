@@ -23,7 +23,7 @@ class StormDataset:
 		self.split_dir = split_dir
 		self.sub_dataset = sub_dataset
 		self.label_names = STORM_LABEL_NAMES
-		self.bool_inference = (split == 'inference')
+		self.bool_inference = split == 'inference'
 
 	def __len__(self):
 		return len(self.ids)
@@ -46,7 +46,7 @@ class StormDataset:
 		labels = list()
 
 		if self.bool_inference:
-			name_img = os.path.join(self.annotation_dir, self.inference_idx2imgname(id_img))
+			name_img = os.path.join(self.data_dir, self.inference_idx2imgname(id_img))
 			img = read_image(name_img, color=True)
 
 		else:		
