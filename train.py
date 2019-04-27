@@ -11,7 +11,7 @@ import matplotlib
 from tqdm import tqdm
 
 from utils.config import opt
-from data.dataset import Dataset, InferDataset, inverse_normalize
+from data.dataset import Dataset, inverse_normalize
 from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
@@ -30,22 +30,6 @@ rlimit = resource.getrlimit(resource.RLIMIT_NOFILE)
 resource.setrlimit(resource.RLIMIT_NOFILE, (20480, rlimit[1]))
 
 matplotlib.use('agg')
-
-def inference(**kwargs):
-    opt._parse(kwargs)
-    print('load data')
-    dataset = InferDataset(opt)
-    dataloader = data_.DataLoader(dataset, \
-                                  batch_size=1, \
-                                  shuffle=False, \
-                                  num_workers=opt.num_workers)
-
-    print('load model')
-    trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-    trainer.load(opt.model_dir)
-    for ii, img in tqdm(enumerate(dataloader)):
-        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
-            img, [img.shape[2:]])
 
 
 def eval(dataloader, faster_rcnn, test_num=100):
@@ -92,7 +76,7 @@ def train(**kwargs):
     if opt.load_path:
         trainer.load(opt.load_path)
         print('load pretrained model from %s' % opt.load_path)
-    # trainer.vis.text(dataset.db.label_names, win='labels')
+
     best_map = 0
     lr_ = opt.lr
     for epoch in range(opt.epoch):
@@ -167,6 +151,12 @@ def train(**kwargs):
         for tag, value in trainer.get_meter_data().items():
             logger.scalar_summary(tag, value, epoch+1)
 
+        # log the precision and recall for every epoch
+        tag_prec, tag_rec = 'prec' + str(epoch), 'rec' + str(epoch)
+        for jj in range(11):
+            logger.scalar_summary(tag_prec, eval_result['prec'][0][jj], jj + 1)
+            logger.scalar_summary(tag_rec, eval_result['rec'][0][jj], jj + 1)
+
         """
         if eval_result['map'] > best_map:
             best_map = eval_result['map']
@@ -181,7 +171,7 @@ def train(**kwargs):
             prec=np.round(eval_result['prec'][0][2], 2),
             rec=np.round(eval_result['rec'][0][2], 2))
 
-        if epoch == 13: 
+        if epoch == 15: 
             break
 
 

@@ -1,5 +1,5 @@
 ## test files for testing roi generation
-import pickle
+import pickle, os
 import numpy as np
 
 # from model.utils.creator_tool import AnchorTargetCreator, ProposalTargetCreator
@@ -16,6 +16,7 @@ from utils import array_tool as at
 from utils.config import opt
 from torch.utils import data as data_
 from collections import namedtuple
+from model import FasterRCNNVGG16
 
 from data.dataset import Dataset, InferDataset, inverse_normalize
 
@@ -41,6 +42,7 @@ dataloader_iterator = iter(dataloader)
 test = next(dataloader_iterator)
 img = test[0]
 
+faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
 trainer = FasterRCNNTrainer(faster_rcnn).cuda()
 trainer.load(os.path.join(opt.model_dir, opt.model_name))
 pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict(

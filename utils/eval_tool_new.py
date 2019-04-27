@@ -61,8 +61,8 @@ def eval_detection(pred_bboxes, pred_labels, pred_scores, gt_pts, gt_labels):
             n_tp = len(np.where(bbox_catch_score_l >= t)[0])
             n_bbox = len(np.where(bbox_total_score_l >= t)[0])
             n_t_pt = len(np.where(pts_catch_score_l >= t)[0])
-            prec[l].append(n_t_pt / n_pts)
-            rec[l].append(n_tp / max(n_bbox, 1))
+            rec[l].append(n_t_pt / n_pts)
+            prec[l].append(n_tp / max(n_bbox, 1))
 
         prec[l], rec[l] = np.array(prec[l]), np.array(rec[l])
 

@@ -8,8 +8,6 @@ from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
 
-# import ipdb
-
 def decom_vgg16():
     # the 30th layer of features is relu of conv5_3
     if opt.caffe_pretrain:
@@ -28,7 +26,7 @@ def decom_vgg16():
         del classifier[2]
     classifier = nn.Sequential(*classifier)
     # freeze top4 conv
-    n = 30
+    n = 24 # 30, 24, 10
     # fix all the layers
     for layer in features[:n]:
         for p in layer.parameters():
@@ -140,7 +138,6 @@ class VGG16RoIHead(nn.Module):
         xy_indices_and_rois = indices_and_rois[:, [0, 2, 1, 4, 3]]
         indices_and_rois =  xy_indices_and_rois.contiguous()
         pool = self.roi(x, indices_and_rois)
-        # ipdb.set_trace()
         pool = pool.view(pool.size(0), -1)
         fc7 = self.classifier(pool)
         roi_cls_locs = self.cls_loc(fc7)
