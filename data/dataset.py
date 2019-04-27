@@ -136,7 +136,7 @@ class Dataset:
 class InferDataset:
     def __init__(self, opt):
         self.opt = opt
-        self.db = ModelDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir)
+        self.db = ModelDataset(opt.inference_dir, opt.split_dir)
         self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
