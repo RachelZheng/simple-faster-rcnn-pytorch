@@ -34,7 +34,7 @@ matplotlib.use('agg')
 def inference(**kwargs):
     opt._parse(kwargs)
     print('load data')
-    dataset = Dataset(opt, split='inference')
+    dataset = InferDataset(opt)
     dataloader = data_.DataLoader(dataset, \
                                   batch_size=1, \
                                   shuffle=False, \
@@ -43,7 +43,7 @@ def inference(**kwargs):
     print('load model')
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     trainer.load(opt.model_dir)
-    for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
+    for ii, img in tqdm(enumerate(dataloader)):
         pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
             img, [img.shape[2:]])
 

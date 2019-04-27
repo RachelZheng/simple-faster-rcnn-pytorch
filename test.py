@@ -31,7 +31,7 @@ proposal_target_creator = ProposalPointTargetCreator()
 extractor, classifier = decom_vgg16()
 
 # get an example of the dataset
-dataset = Dataset(opt, split='inference')
+dataset = InferDataset(opt)
 logger = Logger('./logs')
 dataloader = data_.DataLoader(dataset, batch_size=1, 
 	shuffle=False, num_workers=opt.num_workers)
@@ -44,3 +44,4 @@ trainer = FasterRCNNTrainer(faster_rcnn).cuda()
 trainer.load(os.path.join(opt.model_dir, opt.model_name))
 pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict(
             img, [img.shape[2:]])
+

@@ -8,7 +8,7 @@ import numpy as np
 from utils.config import opt
 
 # add personal dataset
-from data.storm_dataset import StormDataset
+from data.storm_dataset import StormDataset, ModelDataset
 
 # MEAN_IMG = [122.7717, 115.9465, 102.9801]
 # STD_IMG = [58.395, 57.12 , 57.375]
@@ -84,12 +84,17 @@ def preprocess(img, min_size=600, max_size=1000):
 
 class Transform(object):
 
-    def __init__(self, min_size=600, max_size=1000):
+    def __init__(self, bool_img_only=True, min_size=600, max_size=1000):
         self.min_size = min_size
         self.max_size = max_size
+        self.bool_img_only = bool_img_only
 
     def __call__(self, in_data):
-        img, points, labels = in_data
+        if self.bool_img_only:
+            img = in_data
+        else:
+            img, points, labels = in_data
+
         _, H, W = img.shape
         img = preprocess(img, self.min_size, self.max_size)
         _, o_H, o_W = img.shape
@@ -97,25 +102,24 @@ class Transform(object):
         # horizontally flip
         img, params = util.random_flip(img, x_random=True, return_param=True)
 
-        if points is not None:
+        if self.bool_img_only:
+            return img, scale
+        else:
             points = util.resize_pts(points, (H, W), (o_H, o_W))
             points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
 
             # keep the points within the range
             points[:,0] = np.clip(points[:,0], 1, o_H)
             points[:,1] = np.clip(points[:,1], 1, o_W)
-        
-        return img, points, labels, scale
+            
+            return img, points, labels, scale
 
 
 class Dataset:
     def __init__(self, opt, split='train'):
         self.opt = opt
-        if split == 'inference':
-            self.db = StormDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir, split=split)
-        else:
-            self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
-        self.tsf = Transform(opt.min_size, opt.max_size)
+        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
+        self.tsf = Transform(bool_img_only=False, opt.min_size, opt.max_size)
 
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
@@ -123,7 +127,26 @@ class Dataset:
 
         # TODO: check whose stride is negative to fix this instead copy all
         # some of the strides of a given numpy array are negative.
-        return img.copy(), points, labels, scale
+        return img.copy(), points.copy(), labels.copy(), scale
 
     def __len__(self):
         return len(self.db)
+
+
+class InferDataset:
+    def __init__(self, opt):
+        self.opt = opt
+        self.db = ModelDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir)
+        self.tsf = Transform(bool_img_only=True, opt.min_size, opt.max_size)
+
+    def __getitem__(self, idx):
+        ori_img = self.db.get_example(idx)
+        img, scale = self.tsf((ori_img))
+
+        # TODO: check whose stride is negative to fix this instead copy all
+        # some of the strides of a given numpy array are negative.
+        return img.copy(), scale
+
+    def __len__(self):
+        return len(self.db)
+   
