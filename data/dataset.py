@@ -140,12 +140,12 @@ class InferDataset:
         self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
-        ori_img = self.db.get_example(idx)
+        ori_img, img_name = self.db.get_example(idx)
         img, scale = self.tsf((ori_img))
 
         # TODO: check whose stride is negative to fix this instead copy all
         # some of the strides of a given numpy array are negative.
-        return img.copy(), scale
+        return img.copy(), scale, img_name
 
     def __len__(self):
         return len(self.db)

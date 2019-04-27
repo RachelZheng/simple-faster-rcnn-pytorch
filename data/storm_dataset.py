@@ -81,9 +81,9 @@ class ModelDataset:
 
 	def get_example(self, i):
 		id_img = self.ids[i]
-		img_name = os.path.join(self.data_dir, self.inference_idx2imgname(id_img))
-		img = read_image(img_name, color=True)
-		return img
+		img_name = self.inference_idx2imgname(id_img)
+		img = read_image(os.path.join(self.data_dir, img_name), color=True)
+		return img, img_name
 
 	__getitem__ = get_example
 
