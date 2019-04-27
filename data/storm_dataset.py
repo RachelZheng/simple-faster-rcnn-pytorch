@@ -65,6 +65,9 @@ class ModelDataset:
 		id_list_file = os.path.join(split_dir, 'inference.txt')
 		self.ids = [int(id_.split('.')[0]) for id_ in open(id_list_file)]
 		self.data_dir = data_dir
+
+	def __len__(self):
+		return len(self.ids)
 	
 	def inference_idx2imgname(self, idx):
 		""" convert the image index to the image name
