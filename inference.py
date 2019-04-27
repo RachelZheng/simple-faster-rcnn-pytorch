@@ -11,6 +11,7 @@ from data.dataset import InferDataset, inverse_normalize
 from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
+from utils import array_tool as at
 from utils.vis_tool_new import vis_pts, vis_bbox
 
 ## tensorboard recording
