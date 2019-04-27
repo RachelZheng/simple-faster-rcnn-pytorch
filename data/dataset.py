@@ -84,7 +84,7 @@ def preprocess(img, min_size=600, max_size=1000):
 
 class Transform(object):
 
-    def __init__(self, bool_img_only=True, min_size=600, max_size=1000):
+    def __init__(self, min_size=600, max_size=1000, bool_img_only=True):
         self.min_size = min_size
         self.max_size = max_size
         self.bool_img_only = bool_img_only
@@ -119,7 +119,7 @@ class Dataset:
     def __init__(self, opt, split='train'):
         self.opt = opt
         self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
-        self.tsf = Transform(bool_img_only=False, opt.min_size, opt.max_size)
+        self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=False)
 
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
@@ -137,7 +137,7 @@ class InferDataset:
     def __init__(self, opt):
         self.opt = opt
         self.db = ModelDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir)
-        self.tsf = Transform(bool_img_only=True, opt.min_size, opt.max_size)
+        self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
         ori_img = self.db.get_example(idx)

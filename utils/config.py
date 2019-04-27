@@ -21,7 +21,7 @@ class Config:
     min_size = 600  # image resize
     max_size = 1000 # image resize
     num_workers = 8
-    test_num_workers = 8
+    test_num_workers = 128
     plot_every = 100
     
     # sigma for l1_smooth_loss
