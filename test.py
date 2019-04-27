@@ -19,6 +19,7 @@ from collections import namedtuple
 
 from data.dataset import Dataset, InferDataset, inverse_normalize
 
+from trainer import FasterRCNNTrainer
 from logger import Logger
 
 LossTuple = namedtuple('LossTuple',

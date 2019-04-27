@@ -14,7 +14,6 @@ from utils import array_tool as at
 from utils.config import opt
 from torchnet.meter import ConfusionMeter, AverageValueMeter
 
-import ipdb
 
 LossTuple = namedtuple('LossTuple',
                        ['rpn_cls_loss',
