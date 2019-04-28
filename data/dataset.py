@@ -99,8 +99,6 @@ class Transform(object):
         img = preprocess(img, self.min_size, self.max_size)
         _, o_H, o_W = img.shape
         scale = o_H / H
-        # horizontally flip
-        img, params = util.random_flip(img, x_random=True, return_param=True)
 
         if self.bool_img_only:
             return img, scale
