@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
-import sys, os
+import sys, os, cv2
 
 import numpy as np
 import matplotlib
