@@ -37,7 +37,7 @@ def inference(**kwargs):
 
     print('load model')
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
-    trainer = FasterRCNNTrainer(faster_rcnn)
+    trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     trainer.load(os.path.join(opt.model_dir, opt.model_name))
     for ii, (img, scale, img_name) in tqdm(enumerate(dataloader)):
         img = img.cuda().float()
