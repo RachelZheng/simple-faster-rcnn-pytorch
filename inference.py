@@ -40,7 +40,7 @@ def inference(**kwargs):
     trainer = FasterRCNNTrainer(faster_rcnn)
     trainer.load(os.path.join(opt.model_dir, opt.model_name))
     for ii, (img, scale, img_name) in tqdm(enumerate(dataloader)):
-        img = img.float()
+        img = img.cuda().float()
         ori_img_ = inverse_normalize(at.tonumpy(img[0]))
         _bboxes, _labels, _scores = trainer.faster_rcnn.predict(
             [ori_img_], visualize=True)
