@@ -103,13 +103,7 @@ class Transform(object):
         if self.bool_img_only:
             return img, scale
         else:
-            points = util.resize_pts(points, (H, W), (o_H, o_W))
-            points = util.flip_pts(points, (o_H, o_W), x_flip=params['x_flip'])
-
-            # keep the points within the range
-            points[:,0] = np.clip(points[:,0], 1, o_H)
-            points[:,1] = np.clip(points[:,1], 1, o_W)
-            
+            points = util.resize_pts(points, (H, W), (o_H, o_W))            
             return img, points, labels, scale
 
 
