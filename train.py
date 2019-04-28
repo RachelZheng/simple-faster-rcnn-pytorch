@@ -69,7 +69,7 @@ def train(**kwargs):
                                        shuffle=False, \
                                        pin_memory=True
                                        )
-    faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, n_layer_fix=opt.n_layer_fix)
     print('model construct completed')
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     if opt.load_path:
@@ -157,6 +157,7 @@ def train(**kwargs):
 
         # save the model for every epoch
         path = trainer.save(n_epoch=epoch,
+            n_layer_fix=opt.n_layer_fix,
             prec=np.round(eval_result['prec'][0][2], 2),
             rec=np.round(eval_result['rec'][0][2], 2))
 

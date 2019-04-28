@@ -8,7 +8,7 @@ from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
 
-def decom_vgg16():
+def decom_vgg16(n_layer_fix=10):
     # the 30th layer of features is relu of conv5_3
     if opt.caffe_pretrain:
         model = vgg16(pretrained=False)
@@ -26,9 +26,9 @@ def decom_vgg16():
         del classifier[2]
     classifier = nn.Sequential(*classifier)
     # freeze top4 conv
-    n = 24 # 30, 24, 10
+    # n = n_layer_fix # 30, 24, 10
     # fix all the layers
-    for layer in features[:n]:
+    for layer in features[:n_layer_fix]:
         for p in layer.parameters():
             p.requires_grad = False
     return nn.Sequential(*features), classifier
@@ -54,11 +54,12 @@ class FasterRCNNVGG16(FasterRCNN):
 
     def __init__(self,
                  n_fg_class=1,
+                 n_layer_fix=10,
                  ratios=[0.5, 1, 2],
                  anchor_scales=[8, 16, 32]
                  ):
                  
-        extractor, classifier = decom_vgg16()
+        extractor, classifier = decom_vgg16(n_layer_fix=n_layer_fix)
 
         rpn = RegionProposalNetwork(
             512, 512,

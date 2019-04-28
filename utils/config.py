@@ -36,6 +36,7 @@ class Config:
 
     # preset
     pretrained_model = 'vgg16'
+    n_layer_fix = 10 ## number of fixed layer in cnn
 
     # training
     epoch = 15
