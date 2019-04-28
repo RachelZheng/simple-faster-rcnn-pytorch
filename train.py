@@ -6,7 +6,6 @@ import cupy as cp
 import os
 
 import numpy as np
-import ipdb
 import matplotlib
 from tqdm import tqdm
 
@@ -91,8 +90,6 @@ def train(**kwargs):
             trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
-                if os.path.exists(opt.debug_file):
-                    ipdb.set_trace()
 
                 # plot loss
                 trainer.vis.plot_many(trainer.get_meter_data())
@@ -147,7 +144,6 @@ def train(**kwargs):
             str(eval_result['prec'][0][2]), str(eval_result['rec'][0][2])))
         
         # Log scalar values (scalar summary)
-        # logger.scalar_summary('accuracy', eval_result['map'], epoch+1)
         for tag, value in trainer.get_meter_data().items():
             logger.scalar_summary(tag, value, epoch+1)
 

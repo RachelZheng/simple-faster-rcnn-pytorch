@@ -4,6 +4,8 @@ import sys, os, cv2
 
 import numpy as np
 import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from utils.config import opt
@@ -73,11 +75,36 @@ def _vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
     return img_
 
 
-def eval_val_test(**kwargs):
-    """ evaluate validation set and test set
+def eval_testset(**kwargs):
+    """ evaluate the performance on the whole test set
     1. compute the precision and recall according to the model
     """
+    opt._parse(kwargs)
+    logger = Logger('./logs')
 
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+    print('model construct completed')
+    trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+    trainer.load(os.path.join(opt.model_dir, opt.model_name))
+
+    for eval_split in ['val_all', 'test_all']:
+        valset = Dataset(opt, split=eval_split)
+        val_dataloader = data_.DataLoader(valset,
+                                           batch_size=1,
+                                           num_workers=opt.test_num_workers,
+                                           shuffle=False, \
+                                           pin_memory=True)
+
+        val_result = eval(val_dataloader, trainer.faster_rcnn, test_num=len(valset))
+        # save the images in output dir
+        plt.figure()
+        plt.axes().set_aspect('equal')
+        plt.plot(val_result['prec'][0], val_result['rec'][0], '+b', label='P-R of BBOX')  # A small noise in the source
+        plt.plot(val_result['prec'][0], val_result['rec_pts'][0], 'xr', label='P-R of PTS')
+        plt.savefig(os.path.join(opt.inference_out_dir, eval_split + '.pdf'))
+        plt.close()
+
+        del valset, val_dataloader, val_result
 
 
 if __name__ == '__main__':

@@ -16,7 +16,7 @@ class Config:
     inference_dir = os.path.join(prefix, 'model_ref_new/')
     inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'
-    model_name = 'fasterrcnn_04260426_0_0.98_0.42'
+    model_name = 'fasterrcnn_04280107_0_0.64_0.93'
 
     min_size = 600  # image resize
     max_size = 1000 # image resize
@@ -50,7 +50,6 @@ class Config:
     load_path = None
 
     caffe_pretrain = False # use caffe pretrained model instead of torchvision
-    # caffe_pretrain_path = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/vgg16_caffe.pth'
 
     def _parse(self, kwargs):
         state_dict = self._state_dict()
