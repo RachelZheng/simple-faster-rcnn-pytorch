@@ -2,7 +2,6 @@
 import cv2, matplotlib
 import numpy as np
 import torch as t
-import ipdb
 
 def vis_pts(img, pts, clr=(0,0,255)):
 	""" visualize points in the image
@@ -12,7 +11,7 @@ def vis_pts(img, pts, clr=(0,0,255)):
 	Return: img
 	"""
 	# transpose (C, H, W) -> (H, W, C)
-	img_ = np.copy(img).transpose((1,2,0))
+	img_ = np.copy(img).transpose((1, 2, 0))
 	pts_ = np.round(np.copy(pts)).astype(int)
 	for pt in pts_:
 		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
@@ -32,12 +31,12 @@ def vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 	Return: img
 	"""
 	# transpose (C, H, W) -> (H, W, C)
-	img_ = np.copy(img).transpose((1,2,0))
+	img_ = np.copy(img).transpose((1, 2, 0))
 	bbox_ = np.round(np.copy(bbox)).astype(int)
 	for bb in bbox_:
-		img_ = cv2.rectangle(img_, (bb[1],bb[0]),(bb[3],bb[2]), clr, 3)
+		img_ = cv2.rectangle(img_, (
+			bb[1], bb[0]), (bb[3], bb[2]), clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)
-	ipdb.set_trace()
-	img_ = img_.transpose((2, 0, 1))
+	img_ = img_.get().transpose((2, 0, 1))
 	return img_
