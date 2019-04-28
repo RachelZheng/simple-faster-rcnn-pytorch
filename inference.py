@@ -12,7 +12,7 @@ from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
 from utils import array_tool as at
-from utils.vis_tool_new import vis_pts, vis_bbox
+import train
 
 ## tensorboard recording
 from logger import Logger
@@ -46,13 +46,38 @@ def inference(**kwargs):
             [ori_img_], visualize=True)
 
         if len(_labels[0]) > 0:
-            ori_img_ = vis_bbox(ori_img_, 
+            ori_img_ = _vis_bbox(ori_img_, 
                         at.tonumpy(_bboxes[0]), 
                         at.tonumpy(_labels[0]).reshape(-1),
                         at.tonumpy(_scores[0]))
 
         ori_img_ = ori_img_.transpose((1,2,0))
         cv2.imwrite(os.path.join(opt.inference_out_dir, img_name[0]), ori_img_)
+
+
+def _vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
+    """ visualize bboxes in the image
+    Args:
+        img: 3 x n x n numpy 
+        bbox: l x 4 numpy
+        labels: l
+        scores: l
+    Return: img
+    """
+    # transpose (C, H, W) -> (H, W, C)
+    img_ = np.copy(img).transpose((1, 2, 0))
+    bbox_ = np.round(np.copy(bbox)).astype(int)
+    for bb in bbox_:
+        img_ = cv2.rectangle(img_, (
+            bb[1], bb[0]), (bb[3], bb[2]), clr, 3)
+    return img_
+
+
+def eval_val_test(**kwargs):
+    """ evaluate validation set and test set
+    1. compute the precision and recall according to the model
+    """
+
 
 
 if __name__ == '__main__':

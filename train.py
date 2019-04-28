@@ -152,25 +152,19 @@ def train(**kwargs):
             logger.scalar_summary(tag, value, epoch+1)
 
         # log the precision and recall for every epoch
+        logger.scalar_summary('accuracy', eval_result['ap'][0], epoch+1)
         tag_prec, tag_rec = 'prec' + str(epoch), 'rec' + str(epoch)
-        for jj in range(11):
+        for jj in range(len(eval_result['prec'][0])):
             logger.scalar_summary(tag_prec, eval_result['prec'][0][jj], jj + 1)
             logger.scalar_summary(tag_rec, eval_result['rec'][0][jj], jj + 1)
+            logger.scalar_summary(tag_rec, eval_result['rec_pts'][0][jj], jj + 1)
 
-        """
-        if eval_result['map'] > best_map:
-            best_map = eval_result['map']
-            best_path = trainer.save(best_map=best_map)
-        if epoch == 9:
-            trainer.load(best_path)
-            trainer.faster_rcnn.scale_lr(opt.lr_decay)
-            lr_ = lr_ * opt.lr_decay
-        """
         # save the model for every epoch
         path = trainer.save(n_epoch=epoch,
             prec=np.round(eval_result['prec'][0][2], 2),
             rec=np.round(eval_result['rec'][0][2], 2))
 
+        del eval_result
         if epoch == 15: 
             break
 
