@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
-import sys, os, cv2
+import sys, os, cv2, ipdb
 
 import numpy as np
 import matplotlib
@@ -40,6 +40,7 @@ def inference(**kwargs):
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     trainer.load(os.path.join(opt.model_dir, opt.model_name))
     for ii, (img, scale, img_name) in tqdm(enumerate(dataloader)):
+        ipdb.set_trace()
         img = img.cuda().float()
         ori_img_ = inverse_normalize(at.tonumpy(img[0]))
         _bboxes, _labels, _scores = trainer.faster_rcnn.predict(
@@ -49,7 +50,7 @@ def inference(**kwargs):
                     at.tonumpy(_labels[0]).reshape(-1),
                     at.tonumpy(_scores[0]))
 
-        cv2.imwrite(os.path.join(opt.inference_out_dir, img_name), ori_img_.transpose((1,2,0)))
+        cv2.imwrite(os.path.join(opt.inference_out_dir, img_name[0]), ori_img_.transpose((1,2,0)))
 
 
 if __name__ == '__main__':
