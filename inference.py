@@ -44,12 +44,15 @@ def inference(**kwargs):
         ori_img_ = inverse_normalize(at.tonumpy(img[0]))
         _bboxes, _labels, _scores = trainer.faster_rcnn.predict(
             [ori_img_], visualize=True)
-        ori_img_ = vis_bbox(ori_img_, 
-                    at.tonumpy(_bboxes[0]), 
-                    at.tonumpy(_labels[0]).reshape(-1),
-                    at.tonumpy(_scores[0]))
 
-        cv2.imwrite(os.path.join(opt.inference_out_dir, img_name[0]), ori_img_.transpose((1,2,0)))
+        if len(_labels[0]) > 0:
+            ori_img_ = vis_bbox(ori_img_, 
+                        at.tonumpy(_bboxes[0]), 
+                        at.tonumpy(_labels[0]).reshape(-1),
+                        at.tonumpy(_scores[0]))
+
+        ori_img_ = ori_img_.transpose((1,2,0))
+        cv2.imwrite(os.path.join(opt.inference_out_dir, img_name[0]), ori_img_)
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 import cv2, matplotlib
 import numpy as np
 import torch as t
-
+import ipdb
 
 def vis_pts(img, pts, clr=(0,0,255)):
 	""" visualize points in the image
@@ -37,6 +37,7 @@ def vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 	for bb in bbox_:
 		img_ = cv2.rectangle(img_, (bb[1],bb[0]),(bb[3],bb[2]), clr, 3)
 
-	# transpose (H, W, C) -> (C, H, W)	
+	# transpose (H, W, C) -> (C, H, W)
+	ipdb.set_trace()
 	img_ = img_.transpose((2, 0, 1))
 	return img_
