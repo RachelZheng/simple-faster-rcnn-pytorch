@@ -116,9 +116,6 @@ class Dataset:
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
         img, points, labels, scale = self.tsf((ori_img, points, labels))
-
-        # TODO: check whose stride is negative to fix this instead copy all
-        # some of the strides of a given numpy array are negative.
         return img.copy(), points.copy(), labels.copy(), scale
 
     def __len__(self):
@@ -128,7 +125,8 @@ class Dataset:
 class InferDataset:
     def __init__(self, opt):
         self.opt = opt
-        self.db = ModelDataset(opt.inference_dir, opt.split_dir)
+        self.db = ModelDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir, 
+            bool_img_only=True, split='inference')
         self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
@@ -141,4 +139,27 @@ class InferDataset:
 
     def __len__(self):
         return len(self.db)
-   
+
+
+class DatasetGeneral:
+    def __init__(self, opt, split='val_all'):
+        self.opt = opt
+        self.db = ModelDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, 
+            bool_img_only=False, split=split)
+        self.tsf_all = Transform(opt.min_size, opt.max_size, bool_img_only=False)
+        self.tsf_img = Transform(opt.min_size, opt.max_size, bool_img_only=True)
+
+    def __getitem__(self, idx):
+        ori_img, points, labels, img_name = self.db.get_example(idx)
+
+        if ori_img is None:
+            return None, points, labels, 0, img_name
+        elif not len(labels):
+            img, scale = self.tsf_img((ori_img))
+            return img.copy(), points, labels, scale, img_name
+        else:
+            img, points, labels, scale = self.tsf_all((ori_img, points, labels))
+            return img.copy(), points.copy(), labels.copy(), scale, img_name
+
+    def __len__(self):
+        return len(self.db)

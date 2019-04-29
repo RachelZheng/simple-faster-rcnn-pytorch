@@ -162,6 +162,12 @@ def train(**kwargs):
             rec=np.round(eval_result['rec'][0][2], 2))
 
         del eval_result
+        
+        # LR decay 
+        if epoch == 9:
+            trainer.faster_rcnn.scale_lr(opt.lr_decay)
+            lr_ = lr_ * opt.lr_decay
+        
         if epoch == 15: 
             break
 

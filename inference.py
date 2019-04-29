@@ -88,7 +88,7 @@ def eval_testset(**kwargs):
     trainer.load(os.path.join(opt.model_dir, opt.model_name))
 
     for eval_split in ['val_all', 'test_all']:
-        valset = Dataset(opt, split=eval_split)
+        valset = DatasetGeneral(opt, split=eval_split)
         val_dataloader = data_.DataLoader(valset,
                                            batch_size=1,
                                            num_workers=opt.test_num_workers,
