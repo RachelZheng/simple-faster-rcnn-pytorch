@@ -56,11 +56,12 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 	ipdb.set_trace()
 
 	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
-
+	pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
 	if (not len(pred_bboxes_) and not len(points_)):
 		continue
 
-	img, points_, labels_, scale, img_name = img[0], points_[0], labels_[0], scale[0], img_name[0]
+	img, points_, labels_, scale, img_name = img[0], points_[0], labels_[0], at.scalar(scale), img_name[0]
+
 	bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
 	## plot 
