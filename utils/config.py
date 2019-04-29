@@ -16,8 +16,8 @@ class Config:
     inference_dir = os.path.join(prefix, 'model_ref_new/')
     inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     n_layer_fix = 10 ## number of fixed layer in cnn
-    model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'
-    model_name = 'fasterrcnn_04280107_0_0.64_0.93'
+    model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/layer10/'
+    model_name = 'fasterrcnn_04290839_3_0.59_1.0'
 
     min_size = 600  # image resize
     max_size = 1000 # image resize
