@@ -15,7 +15,7 @@ class Config:
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
     inference_dir = os.path.join(prefix, 'model_ref_new/')
     inference_out_dir = os.path.join(prefix, 'model_inference_result/')
-    n_layer_fix = 10 ## number of fixed layer in cnn
+    n_layer_fix = 24 ## number of fixed layer in cnn
     model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/layer10/'
     model_name = 'fasterrcnn_04290839_3_0.59_1.0'
 

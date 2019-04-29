@@ -85,7 +85,7 @@ if __name__ == '__main__':
 		batch_size=1,
 		num_workers=opt.test_num_workers, 
 		shuffle=False,
-		pin_memory=True)
+		pin_memory=False)
 
 	## record the data into one text file
 	folder = os.path.join('/pylon5/ir5fp5p/xzheng4/temp/', opt.model_name)
