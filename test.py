@@ -1,6 +1,7 @@
 ## test files for computing PR curve and AP score on all the severe weather events 
 import pickle, os, six
 import numpy as np
+from tqdm import tqdm
 
 from model.utils.creator_tool_pts import AnchorPointTargetCreator, ProposalPointTargetCreator
 
@@ -47,11 +48,13 @@ val_dataloader = data_.DataLoader(valset,
                                    pin_memory=True)
 
 ## record the data into one text file
-f_pts = open('/pylon5/ir5fp5p/xzheng4/temp/pts.txt', 'w')
-f_bbox = open('/pylon5/ir5fp5p/xzheng4/temp/bbox.txt', 'w')
+folder = '/pylon5/ir5fp5p/xzheng4/temp/'
+f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
+f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 
 for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
 	ipdb.set_trace()
+
 	if img is None:
 		continue
 	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
@@ -59,7 +62,21 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
 	if (not len(pred_bboxes_) and not len(points_)):
 		continue
 
+	img, points_, labels_, scale, img_name = img[0], points_[0], labels_[0], scale[0], img_name[0]
 	bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
+
+	## plot 
+	if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
+		ori_img_ = inverse_normalize(at.tonumpy(img[0]))
+		# plot image with points and bboxes
+		pred_img_ = vis_pts(ori_img_, at.tonumpy(points_))
+		_bboxes, _labels, _scores = trainer.faster_rcnn.predict(
+			[ori_img_], visualize=True)
+		pred_img_ = vis_bbox(pred_img_, 
+			at.tonumpy(pred_bboxes_), 
+			at.tonumpy(pred_labels_).reshape(-1),
+			at.tonumpy(pred_scores_))
+
 
 	if len(points_):
 		points_ /= scale
@@ -76,6 +93,7 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
 			pred_bboxes_, bbox_catch_scores_, pred_scores_):
 			f_bbox.write('{} {} {} {} {} {} {}\n'.format(img_name, np.round(bbox_catch_score,3), 
 				np.round(pred_score, 3), pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
+
 
 f_pts.close()
 f_bbox.close()
