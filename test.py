@@ -14,6 +14,7 @@ from model.faster_rcnn_vgg16 import decom_vgg16
 from model.roi_module import RoIPooling2D
 from utils import array_tool as at
 from utils.config import opt
+from utils.vis_tool_new import vis_pts, vis_bbox
 from torch.utils import data as data_
 from collections import namedtuple
 from model import FasterRCNNVGG16
