@@ -69,63 +69,69 @@ def _vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 	return img_
 
 
-logger = Logger('./logs')
+def test():
+	logger = Logger('./logs')
 
-faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
-print('model construct completed')
-trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-trainer.load(os.path.join(opt.model_dir, opt.model_name))
+	faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+	print('model construct completed')
+	trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+	trainer.load(os.path.join(opt.model_dir, opt.model_name))
 
-eval_split = 'test_all'
-valset = DatasetGeneral(opt, split=eval_split)
+	eval_split = 'test_all'
+	valset = DatasetGeneral(opt, split=eval_split)
 
-val_dataloader = data_.DataLoader(valset,
-                                   batch_size=1,
-                                   num_workers=opt.test_num_workers,
-                                   shuffle=False, \
-                                   pin_memory=True)
+	val_dataloader = data_.DataLoader(valset, 
+		batch_size=1,
+		num_workers=opt.test_num_workers, 
+		shuffle=False,
+		pin_memory=True)
 
-## record the data into one text file
-folder = os.path.join('/pylon5/ir5fp5p/xzheng4/temp/', opt.model_name)
-os.system('mkdir %s'%(folder))
-f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
-f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
+	## record the data into one text file
+	folder = os.path.join('/pylon5/ir5fp5p/xzheng4/temp/', opt.model_name)
+	os.system('mkdir %s'%(folder))
+	f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
+	f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 
 
-for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
-	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
-	pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
-	points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
-	if (not len(pred_bboxes_) and not len(points_)):
-		continue
+	for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
+		pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
+		pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
+		points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
+		if (not len(pred_bboxes_) and not len(points_)):
+			continue
 
-	img, scale, img_name = at.tonumpy(img[0]), at.scalar(scale), img_name[0]
-	bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
+		img, scale, img_name = at.tonumpy(img[0]), at.scalar(scale), img_name[0]
+		bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
-	## plot 
-	if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
-		ori_img_ = inverse_normalize(img)
-		# plot image with points and bboxes
-		pred_img_ = _vis_pts(ori_img_, points_)
-		pred_img_ = _vis_bbox(pred_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
-		ipdb.set_trace()
-		cv2.imwrite(os.path.join(folder, img_name), pred_img_.transpose((2, 0, 1)))
+		## plot 
+		if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
+			ori_img_ = inverse_normalize(img)
+			# plot image with points and bboxes
+			pred_img_ = _vis_pts(ori_img_, points_)
+			pred_img_ = _vis_bbox(pred_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
+			ipdb.set_trace()
+			cv2.imwrite(os.path.join(folder, img_name), pred_img_.transpose((2, 0, 1)))
 
-	if len(points_):
-		points_ /= scale
-		match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
-		pts_catch_scores_ = np.max(match_score, axis=0)
-		bbox_catch_scores_ = np.max(match_score, axis=1)
-		for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
-			f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
-				img_name, pts_catch_score, point[0], point[1]))
+		if len(points_):
+			points_ /= scale
+			match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
+			pts_catch_scores_ = np.max(match_score, axis=0)
+			bbox_catch_scores_ = np.max(match_score, axis=1)
+			for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
+				f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
+					img_name, pts_catch_score, point[0], point[1]))
 
-	if len(pred_bboxes_):
-		pred_bboxes_ /= scale
-		for pred_bbox, bbox_catch_score, pred_score in six.moves.zip(
-			pred_bboxes_, bbox_catch_scores_, pred_scores_):
-			f_bbox.write('{} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f}\n'.format(
-				img_name, bbox_catch_score,	pred_score, pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
+		if len(pred_bboxes_):
+			pred_bboxes_ /= scale
+			for pred_bbox, bbox_catch_score, pred_score in six.moves.zip(
+				pred_bboxes_, bbox_catch_scores_, pred_scores_):
+				f_bbox.write('{} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f}\n'.format(
+					img_name, bbox_catch_score,	pred_score, pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
 
-f_pts.close()
-f_bbox.close()
+	f_pts.close()
+	f_bbox.close()
+
+if __name__ == '__main__':
+	import fire
+
+	fire.Fire()
