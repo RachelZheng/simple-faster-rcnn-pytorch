@@ -93,7 +93,14 @@ if __name__ == '__main__':
 	f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
 	f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 
+	dataloader_iterator = iter(val_dataloader)
+	for i in range(len(valset)):
+		try:
+			(img, points_, labels_, scale, img_name) = next(dataloader_iterator)
+		except:
+			print('error at num ' + str(i))
 
+"""
 	for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
 		pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
 		pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
@@ -131,3 +138,4 @@ if __name__ == '__main__':
 
 	f_pts.close()
 	f_bbox.close()
+"""
