@@ -79,7 +79,7 @@ def train(**kwargs):
         ckps.sort(key=lambda x: os.path.getmtime(x))
         trainer.load(ckps[-1])
         print('load pretrained model from %s' % ckps[-1])
-        n_epoch_begin = int(ckps[-1].split('/')[-1].split('_')[2])
+        n_epoch_begin = int(ckps[-1].split('/')[-1].split('_')[2]) + 1
 
     best_map = 0
     lr_ = opt.lr
