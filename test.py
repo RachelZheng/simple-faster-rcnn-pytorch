@@ -48,7 +48,8 @@ val_dataloader = data_.DataLoader(valset,
                                    pin_memory=True)
 
 ## record the data into one text file
-folder = '/pylon5/ir5fp5p/xzheng4/temp/'
+folder = os.path.join('/pylon5/ir5fp5p/xzheng4/temp/', opt.model_name)
+os.system('mkdir %s'%(folder))
 f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
 f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 
@@ -61,7 +62,6 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 
 	img, scale, img_name = at.tonumpy(img[0]), at.scalar(scale), img_name[0]
 	bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
-	ipdb.set_trace()
 
 	## plot 
 	if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
@@ -74,8 +74,8 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 			at.tonumpy(pred_bboxes_), 
 			at.tonumpy(pred_labels_).reshape(-1),
 			at.tonumpy(pred_scores_))
-
-		cv2.imwrite(folder + img_name, pred_img_.transpose((2, 0, 1)))
+		ipdb.set_trace()
+		cv2.imwrite(os.path.join(folder, img_name), pred_img_.transpose((2, 0, 1)))
 
 	if len(points_):
 		points_ /= scale
@@ -83,16 +83,15 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 		pts_catch_scores_ = np.max(match_score, axis=0)
 		bbox_catch_scores_ = np.max(match_score, axis=1)
 		for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
-			f_pts.write('{} {} {} {}\n'.format(img_name, np.round(pts_catch_score,3),
-				point[0], point[1]))
+			f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
+				img_name, pts_catch_score, point[0], point[1]))
 
 	if len(pred_bboxes_):
 		pred_bboxes_ /= scale
 		for pred_bbox, bbox_catch_score, pred_score in six.moves.zip(
 			pred_bboxes_, bbox_catch_scores_, pred_scores_):
-			f_bbox.write('{} {} {} {} {} {} {}\n'.format(img_name, np.round(bbox_catch_score,3), 
-				np.round(pred_score, 3), pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
-
+			f_bbox.write('{} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f}\n'.format(
+				img_name, bbox_catch_score,	pred_score, pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
 
 f_pts.close()
 f_bbox.close()
