@@ -57,16 +57,16 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 
 	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
 	pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
+	points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
 	if (not len(pred_bboxes_) and not len(points_)):
 		continue
 
-	img, points_, labels_, scale, img_name = img[0], points_[0], labels_[0], at.scalar(scale), img_name[0]
-
+	img, scale, img_name = at.tonumpy(img[0]), at.scalar(scale), img_name[0]
 	bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
 	## plot 
 	if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
-		ori_img_ = inverse_normalize(at.tonumpy(img[0]))
+		ori_img_ = inverse_normalize(img)
 		# plot image with points and bboxes
 		pred_img_ = vis_pts(ori_img_, at.tonumpy(points_))
 		_bboxes, _labels, _scores = trainer.faster_rcnn.predict(
@@ -77,7 +77,6 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloade
 			at.tonumpy(pred_scores_))
 
 		cv2.imwrite(folder + img_name, pred_img_.transpose((2, 0, 1)))
-
 
 	if len(points_):
 		points_ /= scale
