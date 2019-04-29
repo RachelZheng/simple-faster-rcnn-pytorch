@@ -1,5 +1,5 @@
 ## test files for computing PR curve and AP score on all the severe weather events 
-import pickle, os, six
+import pickle, os, six, cv2
 import numpy as np
 from tqdm import tqdm
 
@@ -52,7 +52,7 @@ folder = '/pylon5/ir5fp5p/xzheng4/temp/'
 f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
 f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 
-for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
+for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
 	ipdb.set_trace()
 
 	if img is None:
@@ -76,6 +76,8 @@ for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
 			at.tonumpy(pred_bboxes_), 
 			at.tonumpy(pred_labels_).reshape(-1),
 			at.tonumpy(pred_scores_))
+
+		cv2.imwrite(folder + img_name, pred_img_.transpose((2, 0, 1)))
 
 
 	if len(points_):
