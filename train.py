@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
-import sys
+import sys, os, time
 
 import cupy as cp
-import os
 
 import numpy as np
 import matplotlib
@@ -55,7 +54,7 @@ def train(**kwargs):
 
     dataset = Dataset(opt, split='train')
     print('load data')
-    logger = Logger('./logs')
+    logger = Logger('./logs/layer%d/'%(opt.n_layer_fix))
 
     dataloader = data_.DataLoader(dataset, \
                                   batch_size=1, \
@@ -72,13 +71,19 @@ def train(**kwargs):
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1, n_layer_fix=opt.n_layer_fix)
     print('model construct completed')
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-    if opt.load_path:
-        trainer.load(opt.load_path)
-        print('load pretrained model from %s' % opt.load_path)
+    n_epoch_begin = 0
+
+    if opt.bool_load_model:
+        load_path = 'checkpoints/layer%d/'%(opt.n_layer_fix)
+        ckps = glob.glob(load_path + 'fasterrcnn_*')
+        ckps.sort(key=lambda x: os.path.getmtime(x))
+        trainer.load(ckps[-1])
+        print('load pretrained model from %s' % ckps[-1])
+        n_epoch_begin = int(ckps[-1].split('/')[-1].split('_')[2])
 
     best_map = 0
     lr_ = opt.lr
-    for epoch in range(opt.epoch):
+    for epoch in range(n_epoch_begin, opt.epoch):
         trainer.reset_meters()
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
@@ -156,10 +161,12 @@ def train(**kwargs):
             logger.scalar_summary(tag_rec, eval_result['rec_pts'][0][jj], jj + 1)
 
         # save the model for every epoch
-        path = trainer.save(n_epoch=epoch,
-            n_layer_fix=opt.n_layer_fix,
-            prec=np.round(eval_result['prec'][0][2], 2),
-            rec=np.round(eval_result['rec'][0][2], 2))
+        timestr = time.strftime('%m%d%H%M')
+        path = trainer.save(
+            save_path='checkpoints/layer%d/fasterrcnn_%s_%d_%.02f_%.02f' %(
+                opt.n_layer_fix, timestr, 
+                eval_result['prec'][0][2], 
+                eval_result['rec'][0][2]))
 
         del eval_result
         

@@ -15,6 +15,7 @@ class Config:
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
     inference_dir = os.path.join(prefix, 'model_ref_new/')
     inference_out_dir = os.path.join(prefix, 'model_inference_result/')
+    n_layer_fix = 10 ## number of fixed layer in cnn
     model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'
     model_name = 'fasterrcnn_04280107_0_0.64_0.93'
 
@@ -36,7 +37,6 @@ class Config:
 
     # preset
     pretrained_model = 'vgg16'
-    n_layer_fix = 10 ## number of fixed layer in cnn
 
     # training
     epoch = 15
@@ -49,6 +49,7 @@ class Config:
     test_num = 10000
     # model
     load_path = None
+    bool_load_model = True
 
     caffe_pretrain = False # use caffe pretrained model instead of torchvision
 
