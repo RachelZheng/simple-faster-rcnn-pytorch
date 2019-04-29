@@ -164,7 +164,7 @@ def train(**kwargs):
         timestr = time.strftime('%m%d%H%M')
         path = trainer.save(
             save_path='checkpoints/layer%d/fasterrcnn_%s_%d_%.02f_%.02f' %(
-                opt.n_layer_fix, timestr, 
+                opt.n_layer_fix, timestr, epoch, 
                 eval_result['prec'][0][2], 
                 eval_result['rec'][0][2]))
 
