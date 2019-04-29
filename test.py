@@ -17,6 +17,8 @@ from torch.utils import data as data_
 from collections import namedtuple
 from model import FasterRCNNVGG16
 
+import ipdb
+
 from data.dataset import DatasetGeneral, inverse_normalize
 
 from trainer import FasterRCNNTrainer
@@ -49,6 +51,7 @@ f_pts = open('/pylon5/ir5fp5p/xzheng4/temp/pts.txt', 'w')
 f_bbox = open('/pylon5/ir5fp5p/xzheng4/temp/bbox.txt', 'w')
 
 for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(dataloader)):
+	ipdb.set_trace()
 	if img is None:
 		continue
 	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
