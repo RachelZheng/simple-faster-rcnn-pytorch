@@ -55,8 +55,6 @@ f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
 for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
 	ipdb.set_trace()
 
-	if img is None:
-		continue
 	pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(img, [img.shape[2:]])
 
 	if (not len(pred_bboxes_) and not len(points_)):

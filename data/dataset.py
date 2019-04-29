@@ -6,6 +6,7 @@ from torchvision import transforms as tvtsf
 from data import util
 import numpy as np
 from utils.config import opt
+import numpy as np
 
 # add personal dataset
 from data.storm_dataset import StormDataset, ModelDataset
@@ -152,11 +153,9 @@ class DatasetGeneral:
     def __getitem__(self, idx):
         ori_img, points, labels, img_name = self.db.get_example(idx)
 
-        if ori_img is None:
-            return None, points, labels, 0, img_name
-        elif not len(labels):
+        if not len(labels):
             img, scale = self.tsf_img((ori_img))
-            return img.copy(), points, labels, scale, img_name
+            return img.copy(), np.zeros((0,2)).astype(np.float32), np.zeros((0,)).astype(np.int32), scale, img_name
         else:
             img, points, labels, scale = self.tsf_all((ori_img, points, labels))
             return img.copy(), points.copy(), labels.copy(), scale, img_name

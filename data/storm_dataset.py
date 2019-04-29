@@ -99,10 +99,7 @@ class ModelDataset:
 		else:
 			img_name = idx2imgname(id_img)
 
-		if os.path.isfile(os.path.join(self.data_dir, img_name)):
-			img = read_image(os.path.join(self.data_dir, img_name), color=True)
-		else:
-			img = None
+		img = read_image(os.path.join(self.data_dir, img_name), color=True)
 
 		if self.bool_img_only:
 			return img, img_name
@@ -121,7 +118,7 @@ class ModelDataset:
 				points = np.stack(points).astype(np.float32)
 				labels = np.stack(labels).astype(np.int32)
 			else:
-				points = np.zeros((0,4)).astype(np.float32)
+				points = np.zeros((0,2)).astype(np.float32)
 				labels = np.zeros((0,)).astype(np.int32)
 			return img, points, labels, img_name
 
