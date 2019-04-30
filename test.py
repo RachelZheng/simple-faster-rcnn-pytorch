@@ -106,7 +106,7 @@ if __name__ == '__main__':
 		img = at.tonumpy(img[0])
 		ori_img_ = inverse_normalize(img)
 		pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict([ori_img_], visualize=True)
-		pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
+		pred_bboxes_, pred_labels_, pred_scores_ = at.tonumpy(pred_bboxes_[0]), at.tonumpy(pred_labels_[0]), at.tonumpy(pred_scores_[0])
 		points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
 		if (not len(pred_bboxes_) and not len(points_)):
 			continue
