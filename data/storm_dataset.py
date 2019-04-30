@@ -106,7 +106,7 @@ class ModelDataset:
 		else:
 			xml_name = os.path.join(self.annotation_dir, '{:07d}.xml'.format(id_img))
 			if os.path.isfile(xml_name):
-				anno = ET.parse(name_xml).getroot()
+				anno = ET.parse(xml_name).getroot()
 				points = list()
 				labels = list()	
 				
