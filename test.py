@@ -113,13 +113,15 @@ if __name__ == '__main__':
 		bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
 		## plot 
-		if (ii + 1) % opt.plot_every == 0 and len(pred_bboxes_) and len(pred_bboxes_):
+		if (ii + 1) % opt.plot_every == 0:
 			ipdb.set_trace()
 			ori_img_ = inverse_normalize(img)
 			# plot image with points and bboxes
-			pred_img_ = _vis_pts(ori_img_, points_)
-			pred_img_ = _vis_bbox(pred_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
-			cv2.imwrite(os.path.join(folder, img_name), pred_img_.transpose((2, 0, 1)))
+			if len(pred_bboxes_):
+				ori_img_ = _vis_pts(ori_img_, points_)
+			if len(pred_bboxes_):
+				ori_img_ = _vis_bbox(ori_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
+			cv2.imwrite(os.path.join(folder, img_name), ori_img_.transpose((2, 0, 1)))
 
 		if len(points_):
 			points_ /= scale
