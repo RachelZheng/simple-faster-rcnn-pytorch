@@ -103,6 +103,7 @@ if __name__ == '__main__':
 
 	"""
 	for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
+		ipdb.set_trace()
 		pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict(img, [img.shape[2:]])
 		pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
 		points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
