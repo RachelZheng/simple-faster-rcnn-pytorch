@@ -123,8 +123,8 @@ if __name__ == '__main__':
 				ori_img_ = _vis_bbox(ori_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
 			cv2.imwrite(os.path.join(folder, img_name), ori_img_.transpose((2, 0, 1)))
 
-		ipdb.set_trace()
 		if len(points_):
+			ipdb.set_trace()
 			points_ /= scale
 			match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
 			pts_catch_scores_ = np.max(match_score, axis=0)
