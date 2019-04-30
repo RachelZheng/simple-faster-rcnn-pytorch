@@ -103,19 +103,19 @@ if __name__ == '__main__':
 
 	"""
 	for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
-		pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict(img, [img.shape[2:]])
+		img = at.tonumpy(img[0])
+		ori_img_ = inverse_normalize(img)
+		pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict(ori_img_, visualize=True)
 		pred_bboxes_, pred_labels_, pred_scores_ = pred_bboxes_[0], pred_labels_[0], pred_scores_[0]
 		points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
 		if (not len(pred_bboxes_) and not len(points_)):
 			continue
 
-		img, scale, img_name = at.tonumpy(img[0]), at.scalar(scale), img_name[0]
+		scale, img_name = at.scalar(scale), img_name[0]
 		bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
 		## plot 
 		if (ii + 1) % opt.plot_every == 0:
-			ori_img_ = inverse_normalize(img)
-			# plot image with points and bboxes
 			if len(points_):
 				ori_img_ = _vis_pts(ori_img_, points_)
 			if len(pred_bboxes_):
