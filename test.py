@@ -125,9 +125,11 @@ if __name__ == '__main__':
 			cv2.imwrite(os.path.join(folder, img_name), ori_img_)
 
 		if len(points_):
-			match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
-			pts_catch_scores_ = np.max(match_score, axis=0)
-			bbox_catch_scores_ = np.max(match_score, axis=1)
+			pts_catch_scores_ = np.zeros((len(points_), ))
+			if len(pred_bboxes_):
+				match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
+				pts_catch_scores_ = np.max(match_score, axis=0)
+				bbox_catch_scores_ = np.max(match_score, axis=1)
 			for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
 				f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
 					img_name, pts_catch_score, point[0], point[1]))
