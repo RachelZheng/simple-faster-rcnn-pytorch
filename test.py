@@ -121,7 +121,7 @@ if __name__ == '__main__':
 				ori_img_ = _vis_pts(ori_img_, points_)
 			if len(pred_bboxes_):
 				ori_img_ = _vis_bbox(ori_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
-			ori_img_ = ori_img_.transpose((2, 0, 1)).astype('uint8')
+			ori_img_ = ori_img_.transpose((1, 2, 0)).astype('uint8')
 			cv2.imwrite(os.path.join(folder, img_name), ori_img_)
 
 		if len(points_):
