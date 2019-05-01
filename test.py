@@ -18,7 +18,7 @@ from torch.utils import data as data_
 from collections import namedtuple
 from model import FasterRCNNVGG16
 
-import ipdb
+# import ipdb
 
 from data.dataset import DatasetGeneral, inverse_normalize
 
@@ -116,7 +116,6 @@ if __name__ == '__main__':
 
 		## plot 
 		if (ii + 1) % opt.plot_every == 0:
-			ipdb.set_trace()
 			if len(points_):
 				ori_img_ = _vis_pts(ori_img_, points_)
 			if len(pred_bboxes_):
