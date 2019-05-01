@@ -147,18 +147,19 @@ class DatasetGeneral:
         self.opt = opt
         self.db = ModelDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, 
             bool_img_only=False, split=split)
-        self.tsf_all = Transform(opt.min_size, opt.max_size, bool_img_only=False)
-        self.tsf_img = Transform(opt.min_size, opt.max_size, bool_img_only=True)
+        self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
         ori_img, points, labels, img_name = self.db.get_example(idx)
+        img, scale = self.tsf((ori_img))
 
-        if not len(labels):
-            img, scale = self.tsf_img((ori_img))
-            return img.copy(), np.zeros((0,2)).astype(np.float32), np.zeros((0,)).astype(np.int32), scale, img_name
+        if len(labels):
+            points_new = (points/scale).copy()
+            labels_new = labels.copy()
         else:
-            img, points, labels, scale = self.tsf_all((ori_img, points, labels))
-            return img.copy(), points.copy(), labels.copy(), scale, img_name
+            points_new = np.zeros((0,2)).astype(np.float32)
+            labels_new = np.zeros((0,)).astype(np.int32)
+        return img.copy(), points_new, labels_new, scale, img_name
 
     def __len__(self):
         return len(self.db)
