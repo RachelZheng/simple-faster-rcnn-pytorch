@@ -46,7 +46,7 @@ def _vis_pts(img, pts, clr=(0,0,255)):
 		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
 
 	# transpose (H, W, C) -> (C, H, W)	
-	img_ = img_.transpose((2, 0, 1))
+	img_ = img_.get().transpose((2, 0, 1))
 	return img_
 
 
