@@ -154,7 +154,7 @@ class DatasetGeneral:
         img, scale = self.tsf((ori_img))
 
         if len(labels):
-            points_new = (points/scale).copy()
+            points_new = (points*scale).copy()
             labels_new = labels.copy()
         else:
             points_new = np.zeros((0,2)).astype(np.float32)
