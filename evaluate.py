@@ -97,7 +97,7 @@ if __name__ == '__main__':
 	folder_model = os.path.join(opt.model_dir, 'layer%d/'%(opt.n_layer_fix))
 	os.chdir(folder_model)
 	n_epoch = int(sys.argv[1])
-	for name_model in glob.glob('fasterrcnn_*_%d_'%(n_epoch)):
+	for name_model in glob.glob('fasterrcnn_*_%d_*'%(n_epoch)):
 		f_pts = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_pts.txt'%(
 			eval_split, opt.n_layer_fix, name_model)), 'w')
 		f_bbox = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_bbox.txt'%(
@@ -108,9 +108,8 @@ if __name__ == '__main__':
 			img = at.tonumpy(img[0])
 			ori_img_ = inverse_normalize(img)
 			pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict([ori_img_], visualize=True)
-			pred_bboxes_, pred_labels_, pred_scores_ = at.tonumpy(
-				pred_bboxes_[0]), at.tonumpy(pred_labels_[0]), at.tonumpy(pred_scores_[0])
-			points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
+			pred_bboxes_, pred_labels_ = at.tonumpy(pred_bboxes_[0]), at.tonumpy(pred_labels_[0])
+			points_, labels_, pred_scores_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0]), at.tonumpy(pred_scores_[0])
 			if (not len(pred_bboxes_) and not len(points_)):
 				continue
 
