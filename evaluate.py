@@ -1,5 +1,5 @@
 ## test files for computing PR curve and AP score on all the severe weather events 
-import pickle, os, six, cv2
+import pickle, os, six, cv2, glob
 import numpy as np
 from tqdm import tqdm
 
@@ -83,7 +83,6 @@ if __name__ == '__main__':
 	faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
 	print('model construct completed')
 	trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-	trainer.load(os.path.join(opt.model_dir, opt.model_name))
 
 	eval_split = 'test_all'
 	valset = DatasetGeneral(opt, split=eval_split)
@@ -95,57 +94,54 @@ if __name__ == '__main__':
 		pin_memory=False)
 
 	## record the data into one text file
-	folder = os.path.join('/pylon5/ir5fp5p/xzheng4/temp/', opt.model_name)
-	os.system('mkdir %s'%(folder))
-	f_pts = open(os.path.join(folder, 'pts.txt'), 'w')
-	f_bbox = open(os.path.join(folder, 'bbox.txt'), 'w')
+	folder_model = os.path.join(opt.model_dir, 'layer%d/'%(opt.n_layer_fix))
+	os.chdir(folder_model)
+	for name_model in glob.glob('fasterrcnn_*'):
+		f_pts = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_pts.txt'%(
+			eval_split, opt.n_layer_fix, name_model)), 'w')
+		f_bbox = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_bbox.txt'%(
+			eval_split, opt.n_layer_fix, name_model)), 'w')
+		trainer.load(os.path.join(folder_model, name_model))
 
-	"""
-	dataloader_iterator = iter(val_dataloader)
-	for i in range(len(valset)):
-		try:
-			(img, points_, labels_, scale, img_name) = next(dataloader_iterator)
-		except:
-			print('error at num ' + str(i))
+		for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
+			img = at.tonumpy(img[0])
+			ori_img_ = inverse_normalize(img)
+			pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict([ori_img_], visualize=True)
+			pred_bboxes_, pred_labels_, pred_scores_ = at.tonumpy(
+				pred_bboxes_[0]), at.tonumpy(pred_labels_[0]), at.tonumpy(pred_scores_[0])
+			points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
+			if (not len(pred_bboxes_) and not len(points_)):
+				continue
 
-	"""
-	for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
-		img = at.tonumpy(img[0])
-		ori_img_ = inverse_normalize(img)
-		pred_bboxes_, pred_labels_, pred_scores_ = trainer.faster_rcnn.predict([ori_img_], visualize=True)
-		pred_bboxes_, pred_labels_, pred_scores_ = at.tonumpy(
-			pred_bboxes_[0]), at.tonumpy(pred_labels_[0]), at.tonumpy(pred_scores_[0])
-		points_, labels_ = at.tonumpy(points_[0]), at.tonumpy(labels_[0])
-		if (not len(pred_bboxes_) and not len(points_)):
-			continue
+			scale, img_name = at.scalar(scale), img_name[0]
+			bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
-		scale, img_name = at.scalar(scale), img_name[0]
-		bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
-
-		## plot 
-		if (ii + 1) % opt.plot_every == 0:
+			"""
+			## plot 
+			if (ii + 1) % opt.plot_every == 0:
+				if len(points_):
+					ori_img_ = _vis_pts(ori_img_, points_)
+				if len(pred_bboxes_):
+					ori_img_ = _vis_bbox(ori_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
+				ori_img_ = ori_img_.transpose((1, 2, 0)).astype('uint8')
+				cv2.imwrite(os.path.join(folder, img_name), ori_img_)
+			"""
 			if len(points_):
-				ori_img_ = _vis_pts(ori_img_, points_)
+				pts_catch_scores_ = np.zeros((len(points_), ))
+				if len(pred_bboxes_):
+					match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
+					pts_catch_scores_ = np.max(match_score, axis=0)
+					bbox_catch_scores_ = np.max(match_score, axis=1)
+				for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
+					f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
+						img_name, pts_catch_score, point[0], point[1]))
+
 			if len(pred_bboxes_):
-				ori_img_ = _vis_bbox(ori_img_, pred_bboxes_, pred_labels_.reshape(-1), pred_scores_)
-			ori_img_ = ori_img_.transpose((1, 2, 0)).astype('uint8')
-			cv2.imwrite(os.path.join(folder, img_name), ori_img_)
+				for pred_bbox, bbox_catch_score, pred_score in six.moves.zip(
+					pred_bboxes_, bbox_catch_scores_, pred_scores_):
+					f_bbox.write('{} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f}\n'.format(
+						img_name, bbox_catch_score,	pred_score, pred_bbox[0], 
+						pred_bbox[1], pred_bbox[2], pred_bbox[3]))
 
-		if len(points_):
-			pts_catch_scores_ = np.zeros((len(points_), ))
-			if len(pred_bboxes_):
-				match_score = bbox_event(pred_bboxes_, pred_scores_, points_)
-				pts_catch_scores_ = np.max(match_score, axis=0)
-				bbox_catch_scores_ = np.max(match_score, axis=1)
-			for point, pts_catch_score in six.moves.zip(points_, pts_catch_scores_):
-				f_pts.write('{} {:.03f} {:.03f} {:.03f}\n'.format(
-					img_name, pts_catch_score, point[0], point[1]))
-
-		if len(pred_bboxes_):
-			for pred_bbox, bbox_catch_score, pred_score in six.moves.zip(
-				pred_bboxes_, bbox_catch_scores_, pred_scores_):
-				f_bbox.write('{} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f} {:.03f}\n'.format(
-					img_name, bbox_catch_score,	pred_score, pred_bbox[0], pred_bbox[1], pred_bbox[2], pred_bbox[3]))
-
-	f_pts.close()
-	f_bbox.close()
+		f_pts.close()
+		f_bbox.close()
