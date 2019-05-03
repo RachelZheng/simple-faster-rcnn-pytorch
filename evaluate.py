@@ -1,5 +1,5 @@
 ## test files for computing PR curve and AP score on all the severe weather events 
-import pickle, os, six, cv2, glob
+import pickle, os, six, cv2, glob, sys
 import numpy as np
 from tqdm import tqdm
 
@@ -96,7 +96,8 @@ if __name__ == '__main__':
 	## record the data into one text file
 	folder_model = os.path.join(opt.model_dir, 'layer%d/'%(opt.n_layer_fix))
 	os.chdir(folder_model)
-	for name_model in glob.glob('fasterrcnn_*'):
+	n_epoch = int(sys.argv[1])
+	for name_model in glob.glob('fasterrcnn_*_%d_'%(n_epoch)):
 		f_pts = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_pts.txt'%(
 			eval_split, opt.n_layer_fix, name_model)), 'w')
 		f_bbox = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_bbox.txt'%(
