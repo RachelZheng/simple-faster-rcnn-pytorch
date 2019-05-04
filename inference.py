@@ -82,8 +82,6 @@ def inference(**kwargs):
     f_bbox.close()
 
 
-
-
 def eval_testset(**kwargs):
     """ evaluate the performance on the whole test set
     1. compute the precision and recall according to the model

@@ -15,10 +15,12 @@ dict_val = defaultdict(list)
 
 for f in files:
 	s = tf.train.summary_iterator(f)
-	for e in s:
-		for v in e.summary.value:
-			tag_char = ''.join(i for i in v.tag if not i.isdigit())
-			if 'img' not in v.tag and tag_char in tags:
-				dict_val[v.tag].append(v.simple_value)
-
-pickle.dump(dict_val, open(folder + 'all_dict.p', 'wb'))
+	try:
+		for e in s:
+			for v in e.summary.value:
+				tag_char = ''.join(i for i in v.tag if not i.isdigit())
+				if 'img' not in v.tag and tag_char in tags:
+					dict_val[v.tag].append(v.simple_value)
+					pickle.dump(dict_val, open(folder + 'all_dict.p', 'wb'))
+	except:
+		dict_val = pickle.load(open(folder + 'all_dict.p', 'wb'))
