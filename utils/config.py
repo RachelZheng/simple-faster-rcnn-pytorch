@@ -13,8 +13,12 @@ class Config:
     data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
     annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
+
+    ## model inference data
+    inference_annotation_dir = os.path.join(
+        prefix, 'ref_dataset/Annotations_model_pts/')
     inference_dir = os.path.join(prefix, 'model_ref_new/')
-    inference_out_dir = os.path.join(prefix, 'model_inference_result/')
+    # inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     eval_dir = os.path.join(prefix, 'ref_dataset/eval/')
     n_layer_fix = 10 ## number of fixed layer in cnn
     model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'

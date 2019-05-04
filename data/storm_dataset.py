@@ -81,7 +81,7 @@ class StormDataset:
 
 class ModelDataset:
 	def  __init__(self, data_dir, annotation_dir, split_dir, 
-		bool_img_only=True, split='inference'):
+		split='inference', bool_img_only=True):
 		id_list_file = os.path.join(split_dir, '{}.txt'.format(split))
 		self.ids = [int(id_.split('.')[0]) for id_ in open(id_list_file)]
 		self.data_dir = data_dir

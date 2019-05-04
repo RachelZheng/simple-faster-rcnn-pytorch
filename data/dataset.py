@@ -123,30 +123,15 @@ class Dataset:
         return len(self.db)
 
 
-class InferDataset:
-    def __init__(self, opt):
-        self.opt = opt
-        self.db = ModelDataset(opt.inference_dir, opt.annotation_dir, opt.split_dir, 
-            bool_img_only=True, split='inference')
-        self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
-
-    def __getitem__(self, idx):
-        ori_img, img_name = self.db.get_example(idx)
-        img, scale = self.tsf((ori_img))
-
-        # TODO: check whose stride is negative to fix this instead copy all
-        # some of the strides of a given numpy array are negative.
-        return img.copy(), scale, img_name
-
-    def __len__(self):
-        return len(self.db)
-
-
 class DatasetGeneral:
     def __init__(self, opt, split='val_all'):
         self.opt = opt
-        self.db = ModelDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, 
-            bool_img_only=False, split=split)
+        if split == 'inference':
+            self.db = ModelDataset(opt.inference_dir, opt.inference_annotation_dir, opt.split_dir, 
+                split=split, bool_img_only=False)
+        else:
+            self.db = ModelDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, 
+                 split=split, bool_img_only=False)
         self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=True)
 
     def __getitem__(self, idx):
