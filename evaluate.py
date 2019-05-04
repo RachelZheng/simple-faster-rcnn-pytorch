@@ -84,7 +84,7 @@ if __name__ == '__main__':
 	print('model construct completed')
 	trainer = FasterRCNNTrainer(faster_rcnn).cuda()
 
-	eval_split = 'test_all'
+	eval_split = 'val_all'
 	valset = DatasetGeneral(opt, split=eval_split)
 
 	val_dataloader = data_.DataLoader(valset, 
