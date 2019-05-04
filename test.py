@@ -13,7 +13,7 @@ files.sort(key=lambda x: os.path.getmtime(x))
 
 dict_val = defaultdict(list)
 
-for f in files
+for f in files:
 	s = tf.train.summary_iterator(f)
 	for e in s:
 		for v in e.summary.value:
