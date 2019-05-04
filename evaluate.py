@@ -97,9 +97,7 @@ if __name__ == '__main__':
 	folder_model = os.path.join(opt.model_dir, 'layer%d/'%(opt.n_layer_fix))
 	os.chdir(folder_model)
 	n_epoch = int(sys.argv[1])
-	model_name_list = glob.glob('fasterrcnn_*_%d_*'%(n_epoch))
-	ipdb.set_trace()
-	for name_model in model_name_list:
+	for name_model in glob.glob('fasterrcnn_*_%d_*'%(n_epoch)):
 		f_pts = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_pts.txt'%(
 			eval_split, opt.n_layer_fix, name_model)), 'w')
 		f_bbox = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_bbox.txt'%(
