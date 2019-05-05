@@ -9,7 +9,12 @@ class Config:
     # data
     prefixes = ('/pylon5/ir5fp5p/xzheng4/data_meteo/', 
         '/oasis/projects/nsf/pen150/xinye/data_meteo/')
-    prefix = prefixes[0]
+    prefixes_pkg = ('/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/',
+        '/oasis/projects/nsf/pen150/xinye/meteology/simple-faster-rcnn-pytorch/')
+
+    idx = 0
+    prefix = prefixes[idx]
+    prefix_pkg = prefixes_pkg[idx]
     data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
     annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
@@ -21,8 +26,8 @@ class Config:
     # inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     eval_dir = os.path.join(prefix, 'ref_dataset/eval/')
     n_layer_fix = 10 ## number of fixed layer in cnn
-    model_dir = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/checkpoints/'
-    model_name = 'fasterrcnn_04290839_3_0.59_1.0'
+    model_dir = os.path.join(prefix_pkg, 'checkpoints/layer10/')
+    model_name = 'fasterrcnn_04302305_4_0.67_1.00'
 
     min_size = 600  # image resize
     max_size = 1000 # image resize

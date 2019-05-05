@@ -5,7 +5,7 @@ from collections import defaultdict
 
 tags = ['rpn_cls_loss', 'roi_cls_loss', 'total_loss']
 
-layer = 10 
+layer = 24 
 folder = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer%d/'%(layer)
 os.chdir(folder)
 files = glob.glob('events.out.tfevents.*')
@@ -24,3 +24,7 @@ for f in files:
 					pickle.dump(dict_val, open(folder + 'all_dict.p', 'wb'))
 	except:
 		dict_val = pickle.load(open(folder + 'all_dict.p', 'wb'))
+
+
+## plot the loss
+## compare the inference
