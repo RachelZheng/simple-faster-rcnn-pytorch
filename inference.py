@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from utils.config import opt
-from data.dataset import InferDataset, inverse_normalize
+from data.dataset import DatasetGeneral, inverse_normalize
 from model import FasterRCNNVGG16
 from torch.utils import data as data_
 from trainer import FasterRCNNTrainer
