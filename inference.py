@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 # though cupy is not used but without this line, it raise errors...
-import sys, os, cv2
-import ipdb
+import sys, os, cv2, six
+# import ipdb
 
 import numpy as np
 import matplotlib
@@ -59,7 +59,7 @@ def inference(**kwargs):
         if (not len(pred_bboxes_) and not len(points_)):
             continue
 
-        ipdb.set_trace()
+        # ipdb.set_trace()
         scale, img_name = at.scalar(scale), img_name[0]
         bbox_catch_scores_ = np.zeros((len(pred_bboxes_), ))
 
