@@ -86,7 +86,7 @@ def train(**kwargs):
     n_epoch_begin = 5
 
     best_map = 0
-    lr_ = opt.lr
+    lr_ = opt.lr * opt.lr_decay
     for epoch in range(n_epoch_begin, opt.epoch):
         trainer.reset_meters()
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
