@@ -26,7 +26,7 @@ class Config:
     # inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     eval_dir = os.path.join(prefix, 'ref_dataset/eval/')
     n_layer_fix = 10 ## number of fixed layer in cnn
-    model_dir = os.path.join(prefix_pkg, 'checkpoints/layer10/')
+    model_dir = os.path.join(prefix_pkg, 'checkpoints/layer{}/'.format(n_layer_fix))
     model_name = 'fasterrcnn_04302305_4_0.67_1.00'
 
     min_size = 600  # image resize

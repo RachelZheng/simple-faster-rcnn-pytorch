@@ -94,15 +94,14 @@ if __name__ == '__main__':
 		pin_memory=False)
 
 	## record the data into one text file
-	folder_model = os.path.join(opt.model_dir, 'layer%d/'%(opt.n_layer_fix))
-	os.chdir(folder_model)
+	os.chdir(opt.model_dir)
 	n_epoch = int(sys.argv[1])
 	for name_model in glob.glob('fasterrcnn_*_%d_*'%(n_epoch)):
 		f_pts = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_pts.txt'%(
 			eval_split, opt.n_layer_fix, name_model)), 'w')
 		f_bbox = open(os.path.join(opt.eval_dir, '%s_layer%d_%s_bbox.txt'%(
 			eval_split, opt.n_layer_fix, name_model)), 'w')
-		trainer.load(os.path.join(folder_model, name_model))
+		trainer.load(os.path.join(opt.model_dir, name_model))
 
 		for ii, (img, points_, labels_, scale, img_name) in tqdm(enumerate(val_dataloader)):
 			img = at.tonumpy(img[0])
