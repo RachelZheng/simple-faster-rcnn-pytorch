@@ -38,17 +38,17 @@ dict_val = pickle.load(open(
 
 
 # n_epoch_iter = 1168
-n, n1, n2 = 0, 3, 5
+n, n1, n2 = 20, 3, 5
 rpn_loss_, roi_loss_, total_loss_, x_epoch = [], [], [], [0]
 rpn_cls_loss, roi_cls_loss, total_loss = [],[],[]
 for n_epoch in np.concatenate([np.arange(n1),np.arange(n2, 13)]):
-	rpn_loss_ += dict_val['rpn_cls_loss' + str(n_epoch)]
-	roi_loss_ += dict_val['roi_cls_loss' + str(n_epoch)]
-	total_loss_ += dict_val['total_loss' + str(n_epoch)]
+	rpn_loss_ += dict_val['rpn_cls_loss' + str(n_epoch)][n:-n]
+	roi_loss_ += dict_val['roi_cls_loss' + str(n_epoch)][n:-n]
+	total_loss_ += dict_val['total_loss' + str(n_epoch)][n:-n]
 	x_epoch.append(len(rpn_loss_))
-	rpn_cls_loss.append(dict_val['rpn_cls_loss' + str(n_epoch)][0])
-	roi_cls_loss.append(dict_val['roi_cls_loss' + str(n_epoch)][0])
-	total_loss.append(dict_val['total_loss' + str(n_epoch)][0])
+	rpn_cls_loss.append(dict_val['rpn_cls_loss' + str(n_epoch)][n])
+	roi_cls_loss.append(dict_val['roi_cls_loss' + str(n_epoch)][n])
+	total_loss.append(dict_val['total_loss' + str(n_epoch)][n])
 
 x = np.arange(len(rpn_loss_))
 rpn_cls_loss.append(rpn_loss_[-1])
@@ -86,4 +86,4 @@ ax1.plot(x_epoch, total_loss, color='skyblue')
 ax1.legend(loc='upper right')
 ax1.set_xlabel('Time')
 ax1.set_ylabel('Loss')
-plt.savefig('/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer10/loss_10.png')
+plt.savefig('/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer10/loss_10_new.png')

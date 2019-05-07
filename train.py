@@ -72,7 +72,6 @@ def train(**kwargs):
     trainer = FasterRCNNTrainer(faster_rcnn).cuda()
     n_epoch_begin = 0
 
-    """
     if opt.bool_load_model:
         load_path = 'checkpoints/layer%d/'%(opt.n_layer_fix)
         ckps = glob.glob(load_path + 'fasterrcnn_*')
@@ -80,13 +79,7 @@ def train(**kwargs):
         trainer.load(ckps[-1])
         print('load pretrained model from %s' % ckps[-1])
         n_epoch_begin = int(ckps[-1].split('/')[-1].split('_')[2]) + 1
-    """
-    ## read the fourth model from the 4th
-    trainer.load(os.path.join(opt.model_dir, opt.model_name))
-    n_epoch_begin = 5
 
-    best_map = 0
-    lr_ = opt.lr * opt.lr_decay
     for epoch in range(n_epoch_begin, opt.epoch):
         trainer.reset_meters()
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
@@ -175,11 +168,11 @@ def train(**kwargs):
         del eval_result
         
         # LR decay 
-        if epoch == 9:
+        if epoch == 5:
             trainer.faster_rcnn.scale_lr(opt.lr_decay)
             lr_ = lr_ * opt.lr_decay
         
-        if epoch == 15: 
+        if epoch == 12: 
             break
 
 
