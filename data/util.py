@@ -46,12 +46,12 @@ def read_image(path, dtype=np.float32, color=True):
 def read_3_imgs(dir_data, img_name):
     """ read the following 3 images
     """
+    ipdb.set_trace()
     dt = imgname2datetime(img_name)
     img = cv2.imread(os.path.join(dir_data, img_name), 0).astype('float32')
     img = img[np.newaxis]
     n_slice = 1
-    ipdb.set_trace()
-    
+
     for i in range(12):
         dt += timedelta(minutes=5)
         img_name_tracking = os.path.join(dir_data, datetime2imgname(dt))
