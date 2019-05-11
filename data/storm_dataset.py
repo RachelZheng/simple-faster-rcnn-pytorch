@@ -54,7 +54,7 @@ class StormDataset:
 		name_xml = os.path.join(self.annotation_dir, '{:07d}.xml'.format(id_img))
 		anno = ET.parse(name_xml).getroot()
 		# img = read_image(os.path.join(self.data_dir, anno.find("filename").text), color=True)
-		img = read_3_imgs(os.path.join(self.data_dir, anno.find("filename").text))
+		img = read_3_imgs(self.data_dir, anno.find("filename").text)
 		points = list()
 		labels = list()	
 		
