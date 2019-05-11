@@ -43,22 +43,36 @@ def read_image(path, dtype=np.float32, color=True):
         return img.transpose((2, 0, 1))
 
 
-def read_3_imgs(dir_data, img_name):
+def read_3_imgs(dir_data, img_name, dtype=np.float32):
     """ read the following 3 images
     """
     ipdb.set_trace()
     dt = imgname2datetime(img_name)
-    img = cv2.imread(os.path.join(dir_data, img_name), 0).astype('float32')
-    img = img[np.newaxis]
-    n_slice = 1
+    n_slice = 0
+    try:
+        f = Image.open(os.path.join(dir_data, img_name))
+        img = np.asarray(f.convert('P'), dtype=dtype)
+        n_slice = 1
+    finally:
+        if hasattr(f, 'close'):
+            f.close()
+            return None
+
+    if img.ndim == 2:
+        # reshape (H, W) -> (1, H, W)
+        return img[np.newaxis]
 
     for i in range(12):
         dt += timedelta(minutes=5)
         img_name_tracking = os.path.join(dir_data, datetime2imgname(dt))
 
         if os.path.isfile(img_name_tracking):
-            img_slice = cv2.imread(img_name_tracking, 0).astype('float32')
-            img = np.concatenate((img, img_slice[np.newaxis]), axis=0)
+            f = Image.open(img_name_tracking)
+            img_slice = np.asarray(f.convert('P'), dtype=dtype)
+            if img_slice.ndim == 2:
+                img_slice = img_slice[np.newaxis]
+
+            img = np.concatenate((img, img_slice), axis=0)
             n_slice += 1
 
         if n_slice == 3:
@@ -71,6 +85,8 @@ def read_3_imgs(dir_data, img_name):
         img[1] = (img[0] + img[2])/2
 
     return img
+    
+
 
 def imgname2datetime(img_name, fmt="%Y%m%d%H%M"):
     return datetime.strptime(img_name[4:16], fmt)
