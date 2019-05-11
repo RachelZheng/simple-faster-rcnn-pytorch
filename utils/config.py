@@ -25,7 +25,7 @@ class Config:
     inference_dir = os.path.join(prefix, 'model_ref_new/')
     # inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     eval_dir = os.path.join(prefix, 'ref_dataset/eval/')
-    n_layer_fix = 0 ## number of fixed layer in cnn
+    n_layer_fix = 10 ## number of fixed layer in cnn
     model_dir = os.path.join(prefix_pkg, 'checkpoints/layer{}/'.format(n_layer_fix))
     model_name = 'fasterrcnn_04302305_4_0.67_1.00'
 
@@ -49,7 +49,7 @@ class Config:
     pretrained_model = 'vgg16'
 
     # training
-    epoch = 15
+    epoch = 12
 
 
     use_adam = False # Use Adam optimizer
