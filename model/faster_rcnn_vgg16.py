@@ -56,7 +56,7 @@ class FasterRCNNVGG16(FasterRCNN):
                  n_fg_class=1,
                  n_layer_fix=10,
                  ratios=[0.5, 1, 2],
-                 anchor_scales=[8, 16, 32]
+                 anchor_scales=[4, 8, 16]
                  ):
                  
         extractor, classifier = decom_vgg16(n_layer_fix=n_layer_fix)

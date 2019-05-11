@@ -4,7 +4,7 @@ from torchvision import transforms as T
 
 import numpy as np
 
-from .util import read_image
+from .util import read_image, read_3_imgs
 
 def idx2imgname(idx, yr_range=[2008, 2017]):
 	""" convert the image index to the image name
@@ -53,7 +53,8 @@ class StormDataset:
 
 		name_xml = os.path.join(self.annotation_dir, '{:07d}.xml'.format(id_img))
 		anno = ET.parse(name_xml).getroot()
-		img = read_image(os.path.join(self.data_dir, anno.find("filename").text), color=True)
+		# img = read_image(os.path.join(self.data_dir, anno.find("filename").text), color=True)
+		img = read_3_imgs(os.path.join(self.data_dir, anno.find("filename").text))
 		points = list()
 		labels = list()	
 		

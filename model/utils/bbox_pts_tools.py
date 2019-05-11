@@ -12,7 +12,8 @@ def bbox_score_intense_event(img, roi, points,
 		score_perpix
 	"""
 
-	img_ = np.copy(img[0,:,:])
+	# img_ = np.copy(img[0,:,:])
+	img_ = np.mean(img, axis=0)
 	H, W = img_.shape
 	roi_ = np.round(np.copy(roi)).astype(int)
 	roi_[:,2] = np.minimum(roi_[:,2], H - 1)

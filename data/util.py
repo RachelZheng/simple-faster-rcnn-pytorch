@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image
-import random
+import random, cv2
+
+from datetime import datetime, timedelta
 
 
 def read_image(path, dtype=np.float32, color=True):
@@ -39,6 +41,42 @@ def read_image(path, dtype=np.float32, color=True):
     else:
         # transpose (H, W, C) -> (C, H, W)
         return img.transpose((2, 0, 1))
+
+
+def read_3_imgs(dir_data, img_name):
+    """ read the following 3 images
+    """
+    dt = imgname2datetime(img_name)
+    img = cv2.imread(os.path.join(dir_data, img_name), 0).astype('float32')
+    img = img[np.newaxis]
+    n_slice = 1
+
+    for i in range(12):
+        dt += timedelta(minutes=5)
+        img_name_tracking = os.path.join(dir_data, datetime2imgname(dt))
+
+        if os.path.isfile(img_name_tracking):
+            img_slice = cv2.imread(img_name_tracking, 0).astype('float32')
+            img = np.concatenate((img, img_slice[np.newaxis]), axis=0)
+            n_slice += 1
+
+        if n_slice == 3:
+            break
+
+    ## if the image has no 3 following data, take avg of the first 2 imgs
+    if n_slice == 2:
+        img2 = img[1]
+        img = np.concatenate((img, img2[np.newaxis]), axis=0)
+        img[1] = (img[0] + img[2])/2
+
+    return img
+
+def imgname2datetime(img_name, fmt="%Y%m%d%H%M"):
+    return datetime.strptime(img_name[4:16], fmt)
+
+
+def datetime2imgname(timeobj):
+    return 'n0r_%s.png'%(timeobj.strftime("%Y%m%d%H%M"))
 
 
 def resize_bbox(bbox, in_size, out_size):

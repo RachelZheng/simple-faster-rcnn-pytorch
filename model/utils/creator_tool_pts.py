@@ -11,10 +11,10 @@ class ProposalPointTargetCreator(object):
     """
     def __init__(self,
                  n_sample=128,
-                 pos_ratio=0.25, 
+                 pos_ratio=0.4, 
                  pos_score_thresh=1,
                  neg_score_thresh_hi=3,
-                 neg_score_thresh_lo=0.5
+                 neg_score_thresh_lo=0.3
                  ):
         self.n_sample = n_sample
         self.pos_ratio = pos_ratio
@@ -134,7 +134,7 @@ class AnchorPointTargetCreator(object):
                  n_sample=256,
                  pos_score_thresh=1, 
                  neg_score_thresh_hi=3,
-                 neg_score_thresh_lo=0.5,
+                 neg_score_thresh_lo=0.3,
                  pos_ratio=0.5):
         self.n_sample = n_sample
         self.pos_score_thresh = pos_score_thresh

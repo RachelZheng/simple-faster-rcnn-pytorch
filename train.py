@@ -86,7 +86,8 @@ def train(**kwargs):
             scale = at.scalar(scale)
             img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
             ## skip abnormal images and zero points
-            if len(img.shape) < 4 or len(points.shape) < 3 or points.shape[2] < 1 or img.shape[3] < 600:
+            if (len(img.shape) < 4 or len(points.shape) < 3 or 
+                points.shape[2] < 1 or img.shape[3] < 600 or img.shape[1] < 3):
                 continue
             
             trainer.train_step(img, points, labels, scale)
@@ -168,7 +169,7 @@ def train(**kwargs):
         del eval_result
         
         # LR decay 
-        if epoch == 5:
+        if epoch == 8:
             trainer.faster_rcnn.scale_lr(opt.lr_decay)
             lr_ = lr_ * opt.lr_decay
         
