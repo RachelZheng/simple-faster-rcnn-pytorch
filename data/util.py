@@ -58,7 +58,7 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
 
     if img.ndim == 2:
         # reshape (H, W) -> (1, H, W)
-        return img[np.newaxis]
+        img = img[np.newaxis]
 
     for i in range(12):
         dt += timedelta(minutes=5)
