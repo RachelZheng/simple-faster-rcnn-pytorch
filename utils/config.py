@@ -16,7 +16,7 @@ class Config:
     prefix = prefixes[idx]
     prefix_pkg = prefixes_pkg[idx]
     data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
-    annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
+    annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations_tracking/')
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
 
     ## model inference data
