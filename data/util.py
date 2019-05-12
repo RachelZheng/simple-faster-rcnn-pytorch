@@ -46,7 +46,6 @@ def read_image(path, dtype=np.float32, color=True):
 def read_3_imgs(dir_data, img_name, dtype=np.float32):
     """ read the following 3 images
     """
-    ipdb.set_trace()
     dt = imgname2datetime(img_name)
     n_slice = 0
     try:
