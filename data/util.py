@@ -60,6 +60,7 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
         # reshape (H, W) -> (1, H, W)
         img = img[np.newaxis]
 
+    """
     for i in range(12):
         dt += timedelta(minutes=5)
         img_name_tracking = os.path.join(dir_data, datetime2imgname(dt))
@@ -81,7 +82,8 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
         img2 = img[1]
         img = np.concatenate((img, img2[np.newaxis]), axis=0)
         img[1] = (img[0] + img[2])/2
-
+    """
+    
     return img
     
 
