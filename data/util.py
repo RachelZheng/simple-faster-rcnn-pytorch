@@ -55,7 +55,6 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
     finally:
         if hasattr(f, 'close'):
             f.close()
-            return None
 
     if img.ndim == 2:
         # reshape (H, W) -> (1, H, W)
