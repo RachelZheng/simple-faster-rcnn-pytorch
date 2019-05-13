@@ -83,7 +83,6 @@ def train(**kwargs):
     for epoch in range(n_epoch_begin, opt.epoch):
         trainer.reset_meters()
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-            scale = at.scalar(scale)
             img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
             ## skip abnormal images and zero points
             if (len(img.shape) < 4 or len(points.shape) < 3 or 
