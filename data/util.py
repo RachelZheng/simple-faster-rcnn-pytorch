@@ -65,10 +65,14 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
         img_name_tracking = os.path.join(dir_data, datetime2imgname(dt))
 
         if os.path.isfile(img_name_tracking):
-            f = Image.open(img_name_tracking)
-            img_slice = np.asarray(f.convert('P'), dtype=dtype)
-            if img_slice.ndim == 2:
-                img_slice = img_slice[np.newaxis]
+            try:
+                f = Image.open(img_name_tracking)
+                img_slice = np.asarray(f.convert('P'), dtype=dtype)
+                if img_slice.ndim == 2:
+                    img_slice = img_slice[np.newaxis]
+            finally:
+                if hasattr(f, 'close'):
+                    f.close()
 
             img = np.concatenate((img, img_slice), axis=0)
             n_slice += 1
