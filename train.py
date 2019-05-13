@@ -88,7 +88,8 @@ def train(**kwargs):
             if (len(img.shape) < 4 or len(points.shape) < 3 or 
                 points.shape[2] < 1 or img.shape[3] < 600 or img.shape[1] < 3):
                 continue
-            
+                
+            ipdb.set_trace()
             trainer.train_step(img, points, labels, scale)
             """
             if (ii + 1) % opt.plot_every == 0:
