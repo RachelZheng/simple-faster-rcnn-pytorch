@@ -1,89 +1,75 @@
+import pickle, os, six, cv2
 import numpy as np
-import pickle, sys, os, glob
-import tensorflow as tf
-from collections import defaultdict
-import pandas as pd
-import seaborn as sns
+from tqdm import tqdm
+from model.utils.creator_tool_pts import AnchorPointTargetCreator, ProposalPointTargetCreator
+import torch as t
+from torch import nn
+from torchvision.models import vgg16
+from model.region_proposal_network import RegionProposalNetwork
+from model.faster_rcnn import FasterRCNN
+from model.faster_rcnn_vgg16 import decom_vgg16
+from model.roi_module import RoIPooling2D
+from utils import array_tool as at
+from utils.config import opt
+from torch.utils import data as data_
+from collections import namedtuple
+from model import FasterRCNNVGG16
+from data.dataset import DatasetGeneral, inverse_normalize, Dataset
+from trainer import FasterRCNNTrainer
+from logger import Logger
 
-import matplotlib
-matplotlib.use('Agg')
-from matplotlib import pyplot as plt
+LossTuple = namedtuple('LossTuple',
+                       ['rpn_cls_loss',
+                        'roi_cls_loss',
+                        'total_loss'
+                        ])
 
-tags = ['rpn_cls_loss', 'roi_cls_loss', 'total_loss']
+def _vis_pts(img, pts, clr=(0,0,255)):
+	""" visualize points in the image
+	Args:
+		img: 3 x n x n numpy 
+		pts: l x 2 numpy 
+	Return: img
+	"""
+	# transpose (C, H, W) -> (H, W, C)
+	img_ = np.copy(img).transpose((1, 2, 0))
+	pts_ = np.round(np.copy(pts)).astype(int)
+	for pt in pts_:
+		img_ = cv2.circle(img_, (pt[1], pt[0]), 3, clr, 3)
+	# transpose (H, W, C) -> (C, H, W)	
+	img_ = img_.transpose((2, 0, 1))
+	return img_
 
-layer = 10
-folder = '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer%d/previous_round/'%(layer)
-os.chdir(folder)
-files = glob.glob('events.out.tfevents.*')
-files.sort(key=lambda x: os.path.getmtime(x))
-
-dict_val = defaultdict(list)
-
-for f in files:
-	s = tf.train.summary_iterator(f)
-	try:
-		for e in s:
-			for v in e.summary.value:
-				tag_char = ''.join(i for i in v.tag if not i.isdigit())
-				if 'img' not in v.tag and tag_char in tags:
-					dict_val[v.tag].append(v.simple_value)
-					pickle.dump(dict_val, open(folder + 'dict.p', 'wb'))
-	except:
-		dict_val = pickle.load(open(folder + 'dict.p', 'rb'))
-
-
-## plot the loss
-dict_val = pickle.load(open(
-	'/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer10/previous_round/all_dict.p', 'rb'))
-
-
-# n_epoch_iter = 1168
-n, n1, n2 = 20, 3, 5
-rpn_loss_, roi_loss_, total_loss_, x_epoch = [], [], [], [0]
-rpn_cls_loss, roi_cls_loss, total_loss = [],[],[]
-for n_epoch in np.concatenate([np.arange(n1),np.arange(n2, 13)]):
-	rpn_loss_ += dict_val['rpn_cls_loss' + str(n_epoch)][n:-n]
-	roi_loss_ += dict_val['roi_cls_loss' + str(n_epoch)][n:-n]
-	total_loss_ += dict_val['total_loss' + str(n_epoch)][n:-n]
-	x_epoch.append(len(rpn_loss_))
-	rpn_cls_loss.append(dict_val['rpn_cls_loss' + str(n_epoch)][n])
-	roi_cls_loss.append(dict_val['roi_cls_loss' + str(n_epoch)][n])
-	total_loss.append(dict_val['total_loss' + str(n_epoch)][n])
-
-x = np.arange(len(rpn_loss_))
-rpn_cls_loss.append(rpn_loss_[-1])
-roi_cls_loss.append(roi_loss_[-1])
-total_loss.append(total_loss_[-1])
-
-"""
-## plot with time
-df = pd.DataFrame(columns=['time', 'loss_type', 'loss_val'])
-
-for i in range(len(rpn_loss_)):
-	df = df.append({'time': x[i], 'loss_type':'RPN_loss', 'loss_val':rpn_loss_[i]}, ignore_index=True)
-	df = df.append({'time': x[i], 'loss_type':'ROI_loss', 'loss_val':roi_loss_[i]}, ignore_index=True)
-	df = df.append({'time': x[i], 'loss_type':'total_loss', 'loss_val':total_loss_[i]}, ignore_index=True)
-
-ax = sns.lineplot(x="time", y="loss_val", hue="loss_type", data=df)
-fig = ax.get_figure()
-fig.savefig("/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer10/loss.png")
+def _vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
+	""" visualize bboxes in the image
+	Args:
+		img: 3 x n x n numpy 
+		bbox: l x 4 numpy
+		labels:	l
+		scores: l
+	Return: img
+	"""
+	# transpose (C, H, W) -> (H, W, C)
+	img_ = np.copy(img).transpose((1, 2, 0))
+	bbox_ = np.round(np.copy(bbox)).astype(int)
+	for bb in bbox_:
+		img_ = cv2.rectangle(img_, (bb[1], bb[0]), (bb[3], bb[2]), clr, 3)
+	# transpose (H, W, C) -> (C, H, W)
+	img_ = img_.transpose((2, 0, 1))
+	return img_
 
 
-# plot losses
-rpn_cls_loss = dict_val['rpn_cls_loss'][:n1] + dict_val['rpn_cls_loss'][n2:]
-roi_cls_loss = dict_val['roi_cls_loss'][:n1] + dict_val['roi_cls_loss'][n2:]
-total_loss = dict_val['total_loss'][:n1] + dict_val['total_loss'][n2:]
-"""
+if __name__ == '__main__':
+logger = Logger('./logs')
+faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+print('model construct completed')
+trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+trainer.load(os.path.join(opt.model_dir, opt.model_name))
+dataset = Dataset(opt, split='train')
+dataloader = data_.DataLoader(dataset, \
+                              batch_size=1, \
+                              shuffle=True, \
+                              num_workers=opt.num_workers)
 
-plt.figure()
-fig, ax1 = plt.subplots()
-ax1.plot(x, rpn_loss_, color='r', label='RPN loss')
-ax1.plot(x, roi_loss_, color='g', label='ROI loss')
-ax1.plot(x, total_loss_, color='b', label='total loss')
-ax1.plot(x_epoch, rpn_cls_loss, color='lightsalmon')
-ax1.plot(x_epoch, roi_cls_loss, color='greenyellow')
-ax1.plot(x_epoch, total_loss, color='skyblue')
-ax1.legend(loc='upper right')
-ax1.set_xlabel('Time')
-ax1.set_ylabel('Loss')
-plt.savefig('/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/logs/layer10/loss_10_new.png')
+dataloader_iterator = iter(dataloader)
+img, points_, labels_, scale, img_name = next(dataloader_iterator)

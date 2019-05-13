@@ -29,7 +29,7 @@ def inference_idx2imgname(idx):
 
 class StormDataset:
 	def  __init__(self, data_dir, annotation_dir, split_dir,
-		sub_dataset='all', split='trainval'):
+		sub_dataset='all', split='train'):
 		if sub_dataset == 'all':
 			id_list_file = os.path.join(
 				split_dir, '{}.txt'.format(split))
