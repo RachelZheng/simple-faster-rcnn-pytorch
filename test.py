@@ -60,16 +60,16 @@ def _vis_bbox(img, bbox, labels, scores, clr=(0,255,0)):
 
 
 if __name__ == '__main__':
-logger = Logger('./logs')
-faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
-print('model construct completed')
-trainer = FasterRCNNTrainer(faster_rcnn).cuda()
-trainer.load(os.path.join(opt.model_dir, opt.model_name))
-dataset = Dataset(opt, split='train')
-dataloader = data_.DataLoader(dataset, \
-                              batch_size=1, \
-                              shuffle=True, \
-                              num_workers=opt.num_workers)
+	logger = Logger('./logs')
+	faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
+	print('model construct completed')
+	trainer = FasterRCNNTrainer(faster_rcnn).cuda()
+	trainer.load(os.path.join(opt.model_dir, opt.model_name))
+	dataset = Dataset(opt, split='train')
+	dataloader = data_.DataLoader(dataset, \
+	                              batch_size=1, \
+	                              shuffle=True, \
+	                              num_workers=opt.num_workers)
 
-dataloader_iterator = iter(dataloader)
-img, points_, labels_, scale, img_name = next(dataloader_iterator)
+	dataloader_iterator = iter(dataloader)
+	img, points_, labels_, scale = next(dataloader_iterator)
