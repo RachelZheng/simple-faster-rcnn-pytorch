@@ -71,5 +71,8 @@ dataloader = data_.DataLoader(dataset, \
                               shuffle=True, \
                               num_workers=opt.num_workers)
 
+img, points_, labels_, scale = dataset.__getitem__(21315)
+
+
 dataloader_iterator = iter(dataloader)
 img, points_, labels_, scale = next(dataloader_iterator)

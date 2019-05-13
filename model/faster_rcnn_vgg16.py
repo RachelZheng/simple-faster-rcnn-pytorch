@@ -55,7 +55,7 @@ class FasterRCNNVGG16(FasterRCNN):
     def __init__(self,
                  n_fg_class=1,
                  n_layer_fix=10,
-                 ratios=[0.5, 1, 2],
+                 ratios=[0.75, 1, 1.33333],
                  anchor_scales=[4, 8, 16]
                  ):
                  
