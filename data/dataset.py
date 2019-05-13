@@ -116,7 +116,7 @@ class Dataset:
 
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
-        ipdb.set_trace()
+        # ipdb.set_trace()
         if ori_img.shape[0] == 3:
             img, points, labels, scale = self.tsf((ori_img, points, labels))
             return img.copy(), points.copy(), labels.copy(), scale
