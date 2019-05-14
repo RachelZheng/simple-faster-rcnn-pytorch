@@ -11,9 +11,6 @@ import ipdb
 # add personal dataset
 from data.storm_dataset import StormDataset, ModelDataset
 
-# MEAN_IMG = [122.7717, 115.9465, 102.9801]
-# STD_IMG = [58.395, 57.12 , 57.375]
-
 # ------ change for storm dataset ------
 MEAN_IMG = [3.2187, 3.2187, 3.2187]
 STD_IMG = [13.6640, 13.6640, 13.6640]
@@ -111,12 +108,11 @@ class Transform(object):
 class Dataset:
     def __init__(self, opt, split='train'):
         self.opt = opt
-        self.db = StormDataset(opt.data_dir, opt.annotation_dir, opt.split_dir, split=split)
+        self.db = StormDataset(opt, split=split)
         self.tsf = Transform(opt.min_size, opt.max_size, bool_img_only=False)
 
     def __getitem__(self, idx):
         ori_img, points, labels = self.db.get_example(idx)
-        # ipdb.set_trace()
         if ori_img.shape[0] == 3:
             img, points, labels, scale = self.tsf((ori_img, points, labels))
             return img.copy(), points.copy(), labels.copy(), scale

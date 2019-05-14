@@ -16,7 +16,13 @@ class Config:
     prefix = prefixes[idx]
     prefix_pkg = prefixes_pkg[idx]
     data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
-    annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations_tracking/')
+
+    bool_train_one_hour = True  ## train the model for one hour images
+    if bool_train_one_hour:
+        annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations_tracking/')
+    else:
+        annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations/')
+
     split_dir = os.path.join(prefix, 'ref_dataset/Data_split/')
 
     ## model inference data

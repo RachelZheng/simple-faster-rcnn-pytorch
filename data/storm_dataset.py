@@ -4,7 +4,7 @@ from torchvision import transforms as T
 import ipdb
 import numpy as np
 
-from .util import read_image, read_3_imgs
+from .util import read_image, read_3_imgs, read_exact_three_imgs
 
 def idx2imgname(idx, yr_range=[2008, 2017]):
 	""" convert the image index to the image name
@@ -28,19 +28,19 @@ def inference_idx2imgname(idx):
 
 
 class StormDataset:
-	def  __init__(self, data_dir, annotation_dir, split_dir,
-		sub_dataset='all', split='train'):
-		if sub_dataset == 'all':
-			id_list_file = os.path.join(
-				split_dir, '{}.txt'.format(split))
+	def  __init__(self, opt, sub_dataset='all', split='train'):
+		if opt.bool_train_one_hour:
+			id_name = '{}_tracking.txt'.format(split)
 		else:
-			id_list_file = os.path.join(
-				split_dir, '{}_{}.txt'.format(sub_dataset, split))
+			id_name = '{}.txt'.format(split)
+
+		id_list_file = os.path.join(opt.split_dir, id_name)
 
 		self.ids = [int(id_.split('.')[0]) for id_ in open(id_list_file)]
-		self.data_dir = data_dir
-		self.annotation_dir = annotation_dir
+		self.data_dir = opt.data_dir
+		self.annotation_dir = opt.annotation_dir
 		self.sub_dataset = sub_dataset
+		self.bool_train_one_hour = opt.bool_train_one_hour
 		self.label_names = STORM_LABEL_NAMES
 
 	def __len__(self):
@@ -55,7 +55,10 @@ class StormDataset:
 		anno = ET.parse(name_xml).getroot()
 		# img = read_image(os.path.join(self.data_dir, anno.find("filename").text), color=True)
 		try:
-			img = read_3_imgs(self.data_dir, idx2imgname(id_img))
+			if self.bool_train_one_hour:
+				img = read_3_imgs(self.data_dir, idx2imgname(id_img))
+			else:
+				img = read_exact_three_imgs(self.data_dir, idx2imgname(id_img))
 		except:
 			img = np.zeros((0,0,3))
 		points = list()
