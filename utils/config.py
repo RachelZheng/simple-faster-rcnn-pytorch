@@ -17,7 +17,7 @@ class Config:
     prefix_pkg = prefixes_pkg[idx]
     data_dir = os.path.join(prefix, 'ref_grayscale/')   # radar observation dir
 
-    bool_train_one_hour = True  ## train the model for one hour images
+    bool_train_one_hour = False  ## train the model for one hour images
     if bool_train_one_hour:
         annotation_dir = os.path.join(prefix, 'ref_dataset/Annotations_tracking/')
     else:
@@ -32,7 +32,10 @@ class Config:
     # inference_out_dir = os.path.join(prefix, 'model_inference_result/')
     eval_dir = os.path.join(prefix, 'ref_dataset/eval/')
     n_layer_fix = 10 ## number of fixed layer in cnn
-    model_dir = os.path.join(prefix_pkg, 'checkpoints/layer{}/'.format(n_layer_fix))
+    model_dir = os.path.join(prefix_pkg, 
+        'checkpoints/layer{}/1hr_{:d}/'.format(n_layer_fix, bool_train_one_hour))
+    logger_dir = os.path.join(prefix_pkg, 
+        'logs/layer{}/1hr_{:d}/'.format(n_layer_fix, bool_train_one_hour))
     model_name = 'fasterrcnn_04302305_4_0.67_1.00'
 
     min_size = 600  # image resize

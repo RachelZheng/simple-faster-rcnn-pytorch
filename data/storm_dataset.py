@@ -30,7 +30,7 @@ def inference_idx2imgname(idx):
 class StormDataset:
 	def  __init__(self, opt, sub_dataset='all', split='train'):
 		if opt.bool_train_one_hour:
-			id_name = '{}_tracking.txt'.format(split)
+			id_name = '{}_1hr.txt'.format(split)
 		else:
 			id_name = '{}.txt'.format(split)
 
