@@ -91,7 +91,8 @@ def read_3_imgs(dir_data, img_name, dtype=np.float32):
 
 def read_exact_three_imgs(dir_data, img_name, dtype=np.float32):
     dt = imgname2datetime(img_name)
-    img_return = np.zeros((0,600,600)).astype('float32')
+    img_return = None
+
     for n_slice in range(3):
         try:
             img_name_full = os.path.join(dir_data, datetime2imgname(dt))
@@ -102,11 +103,15 @@ def read_exact_three_imgs(dir_data, img_name, dtype=np.float32):
                 if img.ndim == 2:
                     # reshape (H, W) -> (1, H, W)
                     img = img[np.newaxis]
-                img_return = np.concatenate((img_return, img), axis=0)
+                
+                if img_return is None:
+                    img_return = np.copy(img)
+                else:
+                    img_return = np.concatenate((img_return, img), axis=0)
         finally:
             if hasattr(f, 'close'):
                 f.close()
-
+                
     return img_return
 
 

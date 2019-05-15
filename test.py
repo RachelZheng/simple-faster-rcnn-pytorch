@@ -65,7 +65,7 @@ faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
 print('model construct completed')
 trainer = FasterRCNNTrainer(faster_rcnn).cuda()
 trainer.load(os.path.join(opt.model_dir, opt.model_name))
-dataset = Dataset(opt, split='train')
+dataset = Dataset(opt, split='val')
 dataloader = data_.DataLoader(dataset, \
                               batch_size=1, \
                               shuffle=True, \
