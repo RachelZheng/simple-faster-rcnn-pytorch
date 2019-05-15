@@ -36,7 +36,6 @@ def eval(dataloader, faster_rcnn, test_num=1000):
     gt_pts, gt_labels = list(), list()
 
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-        ipdb.set_trace()
         if img.shape[1] == 3:
             pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
                 img, [img.shape[2:]])
@@ -86,7 +85,7 @@ def train(**kwargs):
 
     for epoch in range(n_epoch_begin, opt.epoch):
         trainer.reset_meters()
-        '''
+
         for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
             scale = at.scalar(scale)
             img, points, labels = img.cuda().float(), points_.cuda(), labels_.cuda()
@@ -144,7 +143,6 @@ def train(**kwargs):
                 for tag, images in info.items():
                     logger.image_summary(tag, 
                         np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
-        '''
 
         # evaluation on every batch
         eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
