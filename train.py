@@ -36,8 +36,8 @@ def eval(dataloader, faster_rcnn, test_num=1000):
     gt_pts, gt_labels = list(), list()
 
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
+        ipdb.set_trace()
         if img.shape[1] == 3:
-            ipdb.set_trace()
             pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
                 img, [img.shape[2:]])
             gt_pts += list(points_.numpy())
