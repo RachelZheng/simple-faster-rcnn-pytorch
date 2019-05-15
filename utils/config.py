@@ -65,7 +65,7 @@ class Config:
     use_chainer = False # try match everything as chainer
     use_drop = False # use dropout in RoIHead
 
-    test_num = 100
+    test_num = 1000
     # model
     load_path = None
     bool_load_model = False

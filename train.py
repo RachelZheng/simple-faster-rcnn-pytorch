@@ -31,20 +31,21 @@ resource.setrlimit(resource.RLIMIT_NOFILE, (20480, rlimit[1]))
 matplotlib.use('agg')
 
 
-def eval(dataloader, faster_rcnn, test_num=100):
+def eval(dataloader, faster_rcnn, test_num=1000):
     pred_bboxes, pred_labels, pred_scores = list(), list(), list()
     gt_pts, gt_labels = list(), list()
-    ipdb.set_trace()
-    
+
     for ii, (img, points_, labels_, scale) in tqdm(enumerate(dataloader)):
-        pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
-            img, [img.shape[2:]])
-        gt_pts += list(points_.numpy())
-        gt_labels += list(labels_.numpy())
-        pred_bboxes += pred_bboxes_
-        pred_labels += pred_labels_
-        pred_scores += pred_scores_
-        if ii == test_num: break
+        if img.shape[1] == 3:
+            ipdb.set_trace()
+            pred_bboxes_, pred_labels_, pred_scores_ = faster_rcnn.predict(
+                img, [img.shape[2:]])
+            gt_pts += list(points_.numpy())
+            gt_labels += list(labels_.numpy())
+            pred_bboxes += pred_bboxes_
+            pred_labels += pred_labels_
+            pred_scores += pred_scores_
+        if ii >= test_num: break
 
     result = eval_detection(
         pred_bboxes, pred_labels, pred_scores,
