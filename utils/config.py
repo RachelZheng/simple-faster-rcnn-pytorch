@@ -68,7 +68,7 @@ class Config:
     test_num = 1000
     # model
     load_path = None
-    bool_load_model = False
+    bool_load_model = True
 
     caffe_pretrain = False # use caffe pretrained model instead of torchvision
 

@@ -51,7 +51,9 @@ def get_example_params(example_index):
 
 
 def preprocess_image(img):
-    img_resize = sktsf.resize(img.transpose(2, 0, 1), (3, 512, 512))
+    img2 = img.transpose(2, 0, 1)
+    img_resize = sktsf.resize(img2
+        , (3, 512, 512))
     normalize = tvtsf.Normalize(mean=MEAN_IMG, std=STD_IMG)
     img_resize = normalize(t.from_numpy(img_resize).float())
     return img_resize.numpy()
