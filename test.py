@@ -1,21 +1,23 @@
 import pickle, os, six, cv2
 import numpy as np
 from tqdm import tqdm
-from model.utils.creator_tool_pts import AnchorPointTargetCreator, ProposalPointTargetCreator
 import torch as t
 from torch import nn
 from torchvision.models import vgg16
+from torch.utils import data as data_
+from collections import namedtuple
+
+from model import FasterRCNNVGG16
 from model.region_proposal_network import RegionProposalNetwork
 from model.faster_rcnn import FasterRCNN
 from model.faster_rcnn_vgg16 import decom_vgg16
 from model.roi_module import RoIPooling2D
+from model.utils.creator_tool_pts import AnchorPointTargetCreator, ProposalPointTargetCreator
 from utils import array_tool as at
 from utils.config import opt
-from torch.utils import data as data_
-from collections import namedtuple
-from model import FasterRCNNVGG16
 from data.dataset import DatasetGeneral, inverse_normalize, Dataset
 from trainer import FasterRCNNTrainer
+
 from logger import Logger
 
 LossTuple = namedtuple('LossTuple',
@@ -65,6 +67,7 @@ faster_rcnn = FasterRCNNVGG16(n_fg_class=1)
 print('model construct completed')
 trainer = FasterRCNNTrainer(faster_rcnn).cuda()
 trainer.load(os.path.join(opt.model_dir, opt.model_name))
+## trainer.load(os.path.join(opt.model_dir, opt.model_name))
 dataset = Dataset(opt, split='val')
 dataloader = data_.DataLoader(dataset, \
                               batch_size=1, \
