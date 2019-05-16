@@ -19,8 +19,6 @@ from torch.utils import data as data_
 from collections import namedtuple
 from model import FasterRCNNVGG16
 
-import ipdb
-
 from data.dataset import DatasetGeneral, inverse_normalize
 
 from trainer import FasterRCNNTrainer

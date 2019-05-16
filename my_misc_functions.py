@@ -4,8 +4,9 @@ import numpy as np
 from PIL import Image
 
 from skimage import transform as sktsf
+import torch as t
 from torchvision import transforms as tvtsf
-
+from trainer import FasterRCNNTrainer
 from model import FasterRCNNVGG16
 from model.faster_rcnn import FasterRCNN
 
@@ -50,7 +51,7 @@ def get_example_params(example_index):
 
 
 def preprocess_image(img):
-    img_resize = sktsf.resize(img.transpose(2, 0, 1), (3, 600, 600))
+    img_resize = sktsf.resize(img.transpose(2, 0, 1), (3, 512, 512))
     normalize = tvtsf.Normalize(mean=MEAN_IMG, std=STD_IMG)
     img_resize = normalize(t.from_numpy(img_resize).float())
     return img_resize.numpy()
@@ -58,5 +59,6 @@ def preprocess_image(img):
 
 if __name__ == '__main__':
     # from my_misc_functions import get_example_params, preprocess_image
-    img = Image.open(img_path).convert('RGB')
-    img_resized = preprocess_image(img)
+    img = Image.open('/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/input_img/n0r_200801081245.png'
+        ).convert('RGB')
+    img_resized = preprocess_image(np.float32(img))
