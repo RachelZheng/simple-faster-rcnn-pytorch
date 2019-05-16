@@ -57,6 +57,6 @@ def preprocess_image(img):
 
 
 if __name__ == '__main__':
-# from my_misc_functions import get_example_params, preprocess_image
-img = Image.open(img_path).convert('RGB')
-img_resized = preprocess_image(img)
+    # from my_misc_functions import get_example_params, preprocess_image
+    img = Image.open(img_path).convert('RGB')
+    img_resized = preprocess_image(img)
