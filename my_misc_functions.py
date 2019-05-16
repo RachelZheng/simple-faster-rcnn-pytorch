@@ -35,7 +35,7 @@ def get_example_params(example_index):
     target_class = example_list[example_index][1]
     file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
     # Read image
-    original_image = Image.open(img_path).convert('RGB')
+    original_image = np.array(Image.open(img_path).convert('RGB'))
     # Process image
     prep_img = preprocess_image(original_image)
     # Define model
