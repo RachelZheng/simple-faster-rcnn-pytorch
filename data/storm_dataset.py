@@ -1,7 +1,6 @@
 import os, warnings
 import xml.etree.ElementTree as ET
 from torchvision import transforms as T
-import ipdb
 import numpy as np
 
 from .util import read_image, read_3_imgs, read_exact_three_imgs
