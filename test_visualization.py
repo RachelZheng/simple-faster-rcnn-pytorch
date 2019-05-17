@@ -3,6 +3,8 @@ import pickle, os, six, cv2
 import numpy as np
 from tqdm import tqdm
 import torch as t
+from PIL import Image
+
 from torch import nn
 from torchvision.models import vgg16
 from torch.utils import data as data_
@@ -28,7 +30,7 @@ file_name_to_export = 'input_img/out.png'
 prep_img = preprocess_image(np.array(original_image))
 
 # Generate cam mask
-cam = grad_cam.generate_cam(prep_img, target_class)
+cam = grad_cam.generate_cam(prep_img, '0')
 # Save mask
 save_class_activation_images(original_image, cam, file_name_to_export)
 print('Grad cam completed')
