@@ -29,6 +29,9 @@ class CamExtractor():
             if int(module_pos) == (self.target_layer - 1):
                 x.register_hook(self.save_gradient)
                 conv_output = x  # Save the convolution output on that layer
+
+        # get the bbox of the model
+        x = model.faster_rcnn
         return conv_output, x
 
     def forward_pass(self, x):
@@ -44,7 +47,7 @@ class CamExtractor():
         locs = self.faster_rcnn.head.cls_loc(x)
         score = self.faster_rcnn.head.score(x)
         """
-        return conv_output
+        return conv_output, features
 
 
 class GradCam():
@@ -57,12 +60,15 @@ class GradCam():
         # Define extractor
         self.extractor = CamExtractor(self.model, target_layer)
 
-    def generate_cam(self, input_image, target_class=None):
+    def generate_cam(self, input_image, points):
         # Full forward pass
         # conv_output is the output of convolutions at specified layer
-        # model_output is the final output of the model (1, 1000)
-        conv_output = self.extractor.forward_pass(input_image)
+        # model_output is the output of the locations
+        conv_output, locs = self.extractor.forward_pass(input_image)
         # Get hooked gradients
+        self.model.faster_rcnn.features.zero_grad()
+        self.model.faster_rcnn.classifier.zero_grad()
+
         guided_gradients = self.extractor.gradients.data.numpy()[0]
         # Get convolution outputs
         target = conv_output.data.numpy()[0]
