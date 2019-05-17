@@ -8,16 +8,25 @@ from torchvision.models import vgg16
 from torch.utils import data as data_
 from collections import namedtuple
 
+from trainer import FasterRCNNTrainer
+from model import FasterRCNNVGG16
+
 from misc_functions import save_class_activation_images
-from my_misc_functions import get_example_params
+from my_misc_functions import preprocess_image
 from my_gradcam import CamExtractor, GradCam
 
-
-target_example = 0  # Snake
-(original_image, prep_img, target_class, file_name_to_export, pretrained_model) =\
-    get_example_params(target_example)
+# ---- load the model ----
 # Grad cam
+pretrained_model = FasterRCNNTrainer(FasterRCNNVGG16(n_fg_class=1)).cuda()
+pretrained_model.load(
+        '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/first_round_results/checkpoints/layer10/fasterrcnn_04302305_4_0.67_1.00')
 grad_cam = GradCam(pretrained_model, target_layer=30)
+
+# --- load the image ----
+original_image = Image.open('input_img/n0r_200801081245.png').convert('RGB')
+file_name_to_export = 'input_img/out.png'
+prep_img = preprocess_image(np.array(original_image))
+
 # Generate cam mask
 cam = grad_cam.generate_cam(prep_img, target_class)
 # Save mask

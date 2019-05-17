@@ -31,8 +31,7 @@ def get_example_params(example_index):
         pretrained_model(Pytorch model): Model to use for the operations
     """
     # Pick one of the examples
-    example_list = (('input_img/n0r_200801081245.png', 0),
-        )
+    example_list = (('input_img/n0r_200801081245.png', 0),)
     img_path = example_list[example_index][0]
     target_class = example_list[example_index][1]
     file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
@@ -57,7 +56,7 @@ def preprocess_image(img):
     img_resize = sktsf.resize(img2, (3, 512, 512))
     normalize = tvtsf.Normalize(mean=MEAN_IMG, std=STD_IMG)
     img_resize = normalize(t.from_numpy(img_resize).float())
-    return img_resize.numpy()
+    return img_resize
 
 
 if __name__ == '__main__':
