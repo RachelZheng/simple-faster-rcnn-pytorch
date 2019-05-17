@@ -39,13 +39,13 @@ def get_example_params(example_index):
     # Read image
     original_image = np.array(Image.open(img_path).convert('RGB'))
     # Process image
-    prep_img = preprocess_image(at.totensor(original_image))
+    prep_img = preprocess_image(original_image)
     # Define model
     # pretrained_model = models.alexnet(pretrained=True)
     pretrained_model = FasterRCNNTrainer(FasterRCNNVGG16(n_fg_class=1)).cuda()
     pretrained_model.load(
         '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/first_round_results/checkpoints/layer10/fasterrcnn_04302305_4_0.67_1.00')
-    return (original_image,
+    return (at.totensor(original_image),
             prep_img,
             target_class,
             file_name_to_export,
@@ -54,8 +54,7 @@ def get_example_params(example_index):
 
 def preprocess_image(img):
     img2 = img.transpose(2, 0, 1)
-    img_resize = sktsf.resize(img2
-        , (3, 512, 512))
+    img_resize = sktsf.resize(img2, (3, 512, 512))
     normalize = tvtsf.Normalize(mean=MEAN_IMG, std=STD_IMG)
     img_resize = normalize(t.from_numpy(img_resize).float())
     return img_resize.numpy()
