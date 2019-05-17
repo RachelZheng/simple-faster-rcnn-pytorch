@@ -14,6 +14,14 @@ def idx2imgname(idx, yr_range=[2008, 2017]):
 	img_name = 'n0r_%04d%02d%02d%02d%02d.png'%(yr_, mon_, day_, hr_, min_)
 	return img_name
 
+def imgname2idx(img_name, yr_range=[2008, 2017]):
+	""" convert the image name to the index in the dataset
+	"""
+	c_yr, c_mon, c_day, c_hr = 107136, 8928, 288, 12
+	yr_, mon_, day_ = int(img_name[4:8]), int(img_name[8:10]), int(img_name[10:12])
+	hr_, min_ = int(img_name[12:14]),int(img_name[14:16])
+	num = int((yr_ - yr_range[0]) * c_yr + (mon_ - 1) * c_mon + (day_ - 1) * c_day + (hr_) * c_hr + min_/5)
+	return num
 
 def inference_idx2imgname(idx):
 	""" convert the image index to the image name
