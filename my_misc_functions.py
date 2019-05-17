@@ -9,6 +9,8 @@ from torchvision import transforms as tvtsf
 from trainer import FasterRCNNTrainer
 from model import FasterRCNNVGG16
 from model.faster_rcnn import FasterRCNN
+from utils import array_tool as at
+
 
 MEAN_IMG = [3.2187, 3.2187, 3.2187]
 STD_IMG = [13.6640, 13.6640, 13.6640]
@@ -37,7 +39,7 @@ def get_example_params(example_index):
     # Read image
     original_image = np.array(Image.open(img_path).convert('RGB'))
     # Process image
-    prep_img = preprocess_image(original_image)
+    prep_img = preprocess_image(at.totensor(original_image))
     # Define model
     # pretrained_model = models.alexnet(pretrained=True)
     pretrained_model = FasterRCNNTrainer(FasterRCNNVGG16(n_fg_class=1)).cuda()
