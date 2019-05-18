@@ -28,7 +28,7 @@ from visualization.grad-cam import GradCam
 pretrained_model = FasterRCNNTrainer(FasterRCNNVGG16(n_fg_class=1))
 pretrained_model.load(
         '/pylon5/ir5fp5p/xzheng4/test_pytorch/simple-faster-rcnn-pytorch/first_round_results/checkpoints/layer10/fasterrcnn_04302305_4_0.67_1.00')
-grad_cam = GradCam(pretrained_model, target_layer=30)
+# grad_cam = GradCam(pretrained_model, target_layer=30)
 
 # ------- load the image ----
 name_img = 'n0r_200801081245.png'
@@ -63,7 +63,6 @@ for module_pos, module in enumerate(pretrained_model.faster_rcnn._modules['extra
         x.register_hook(extract)
         conv_output = x  # Save the convolution output on that layer
 """
-model2 = vgg16(pretrained=True)
 
 grad_cam = GradCam(model = models.vgg19(pretrained=True), \
 					target_layer_names = ["35"], use_cuda=args.use_cuda)
