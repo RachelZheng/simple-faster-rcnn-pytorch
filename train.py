@@ -142,6 +142,11 @@ def train(**kwargs):
                     logger.image_summary(tag, 
                         np.expand_dims(images.transpose((1,2,0)), axis=0) , ii+1)
 
+        # Log scalar values (scalar summary)
+        for tag, value in trainer.get_meter_data().items():
+            logger.scalar_summary(tag, value, epoch+1)
+
+        """
         # evaluation on every batch
         eval_result = eval(test_dataloader, trainer.faster_rcnn, test_num=opt.test_num)
         lr_ = trainer.faster_rcnn.optimizer.param_groups[0]['lr']
@@ -149,10 +154,6 @@ def train(**kwargs):
             str(epoch), str(lr_), str(trainer.get_meter_data()), 
             str(eval_result['prec'][0][2]), str(eval_result['rec'][0][2])))
         
-        # Log scalar values (scalar summary)
-        for tag, value in trainer.get_meter_data().items():
-            logger.scalar_summary(tag, value, epoch+1)
-
         # log the precision and recall for every epoch
         logger.scalar_summary('accuracy', eval_result['ap'][0], epoch+1)
         tag_prec, tag_rec = 'prec' + str(epoch), 'rec' + str(epoch)
@@ -170,7 +171,12 @@ def train(**kwargs):
                 eval_result['rec'][0][2]))
 
         del eval_result
-        
+        """
+        timestr = time.strftime('%m%d%H%M')
+        path = trainer.save(
+            save_path='checkpoints/layer%d/fasterrcnn_%s_%d' %(
+                opt.n_layer_fix, timestr, epoch))
+
         # LR decay 
         if epoch == 8:
             trainer.faster_rcnn.scale_lr(opt.lr_decay)
